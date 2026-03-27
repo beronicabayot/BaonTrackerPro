@@ -1,0 +1,10 @@
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\BaonTrackerPro.csproj.AssemblyReference.cache
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\BaonTrackerPro.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\BaonTrackerPro.AssemblyInfoInputs.cache
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\BaonTrackerPro.AssemblyInfo.cs
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\BaonTrackerPro.csproj.CoreCompileInputs.cache
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\BaonTrackerPro.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\BaonTrackerPro.RazorAssemblyInfo.cache
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\BaonTrackerPro.RazorAssemblyInfo.cs
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\BaonTrackerPro.sourcelink.json
