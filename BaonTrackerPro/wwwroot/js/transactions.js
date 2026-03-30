@@ -1,56 +1,42 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // --- Custom Dropdown Logic ---
-    const dropdownTriggers = document.querySelectorAll('.dropdown-trigger');
-    const dropdownPanels = document.querySelectorAll('.dropdown-panel');
-    const dropdownItems = document.querySelectorAll('.dropdown-item');
-
-    function closeAllDropdowns() {
-        dropdownPanels.forEach(panel => panel.classList.remove('open'));
-    }
-
-    dropdownTriggers.forEach(trigger => {
-        trigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const panel = trigger.nextElementSibling;
-            if (panel.classList.contains('open')) {
-                panel.classList.remove('open');
-            } else {
-                closeAllDropdowns();
-                panel.classList.add('open');
-            }
-        });
-    });
-
-    dropdownItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            const value = item.getAttribute('data-value');
-            const display = item.querySelector('span:not(.item-icon)')?.innerText || value;
-            const trigger = item.closest('.custom-dropdown').querySelector('.dropdown-trigger');
-            const selectedDisplay = trigger.querySelector('.selected-category-display');
-            const hiddenInput = item.closest('.custom-dropdown').querySelector('input[name="Category"]');
-
-            selectedDisplay.innerText = display;
-            hiddenInput.value = value;
-
-            const panel = item.closest('.dropdown-panel');
-            panel.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('selected'));
-            item.classList.add('selected');
-
-            closeAllDropdowns();
-            e.stopPropagation();
-        });
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.custom-dropdown')) {
-            closeAllDropdowns();
-        }
-    });
+document.addEventListener('DOMContentLoaded', function () {
 
     // --- Segmented Toggle Logic ---
     const options = document.querySelectorAll('.segmented-option');
     const transactionTypeInput = document.getElementById('TransactionType');
     const amountInput = document.getElementById('Amount');
+
+    // --- Category options per type ---
+    const categoryOptions = {
+        expense: [
+            { value: 'Food & Drinks', label: '🍔 Food & Drinks' },
+            { value: 'Transportation', label: '🚕 Transportation' },
+            { value: 'Personal/Lifestyle', label: '👗 Personal/Lifestyle' },
+            { value: 'Bills & Utilities', label: '📄 Bills & Utilities' },
+            { value: 'Entertainment', label: '🎮 Entertainment' },
+            { value: 'Education', label: '📚 Education' },
+            { value: 'Health', label: '💊 Health' },
+            { value: 'Others', label: '📦 Others' },
+        ],
+        income: [
+            { value: 'Salary', label: '💼 Salary' },
+            { value: 'Freelance', label: '💻 Freelance' },
+            { value: 'Allowance', label: '🎒 Allowance' },
+            { value: 'Gift', label: '🎁 Gift' },
+            { value: 'Others', label: '📦 Others' },
+        ]
+    };
+
+    function updateCategories(type) {
+        const categorySelect = document.getElementById('Category');
+        if (!categorySelect) return;
+        categorySelect.innerHTML = '<option value="" disabled selected>Select category</option>';
+        categoryOptions[type].forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.label;
+            categorySelect.appendChild(option);
+        });
+    }
 
     function updateActive(activeType) {
         options.forEach(opt => {
@@ -60,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         if (transactionTypeInput) transactionTypeInput.value = activeType;
+        updateCategories(activeType); // swap categories on toggle
     }
 
     options.forEach(opt => {
@@ -69,13 +56,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Set default active to Expense
+    updateActive('expense');
+
     // --- Date/Time combination ---
-    const datePicker = document.getElementById('DatePicker');      // visible date picker
-    const timePicker = document.getElementById('TimePicker');      // visible time picker
-    const dateHidden = document.getElementById('Date');            // hidden field that holds combined value
+    const datePicker = document.getElementById('DatePicker');
+    const timePicker = document.getElementById('TimePicker');
+    const dateHidden = document.getElementById('Date');
     const today = new Date();
 
-    // Set default date & time to current values
     if (datePicker) {
         datePicker.value = today.toISOString().split('T')[0];
     }
@@ -85,17 +74,16 @@ document.addEventListener('DOMContentLoaded', function() {
         timePicker.value = `${hours}:${minutes}`;
     }
 
-    // --- Form submission: combine date/time and adjust amount sign ---
+    // --- Form submission ---
     const form = document.getElementById('addTransactionForm');
     if (form) {
-        form.addEventListener('submit', function(e) {
-            // Combine date and time into the hidden field
+        form.addEventListener('submit', function (e) {
+            // Combine date + time into hidden Date field
             if (datePicker && timePicker && dateHidden) {
                 const dateValue = datePicker.value;
                 const timeValue = timePicker.value;
                 if (dateValue && timeValue) {
-                    const combined = `${dateValue}T${timeValue}:00`;
-                    dateHidden.value = combined;
+                    dateHidden.value = `${dateValue}T${timeValue}:00`;
                 }
             }
 
@@ -111,34 +99,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Set default active to Expense
-    updateActive('expense');
-
     // --- Modal reset when closed ---
     const modal = document.getElementById('addTransactionModal');
     if (modal) {
         modal.addEventListener('hidden.bs.modal', function () {
-            // Reset category dropdown
-            const triggers = document.querySelectorAll('.dropdown-trigger');
-            triggers.forEach(trigger => {
-                const selectedDisplay = trigger.querySelector('.selected-category-display');
-                if (selectedDisplay) selectedDisplay.innerText = 'Select category';
-            });
-            const hiddenInputs = document.querySelectorAll('input[name="Category"]');
-            hiddenInputs.forEach(input => input.value = '');
-            document.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('selected'));
+            updateActive('expense'); // resets to expense + reloads expense categories
 
-            // Reset segmented control
-            updateActive('expense');
-
-            // Reset other fields
             const descInput = document.getElementById('Description');
             if (descInput) descInput.value = '';
             if (amountInput) amountInput.value = '';
+
+            const categorySelect = document.getElementById('Category');
+            if (categorySelect) categorySelect.value = '';
+
             const notesInput = document.getElementById('Notes');
             if (notesInput) notesInput.value = '';
 
-            // Reset date & time pickers to current values
             if (datePicker) datePicker.value = today.toISOString().split('T')[0];
             if (timePicker) {
                 const hours = today.getHours().toString().padStart(2, '0');
@@ -148,4 +124,5 @@ document.addEventListener('DOMContentLoaded', function() {
             if (dateHidden) dateHidden.value = '';
         });
     }
+
 });

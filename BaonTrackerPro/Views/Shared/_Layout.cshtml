@@ -7,35 +7,57 @@
     <title>@ViewData["Title"] - BaonTracker PRO</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/iconoir-icons/iconoir@main/css/iconoir.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/iconoir@7.8.0/css/iconoir.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 
 <body>
+
+    <!-- Mobile Top Bar -->
+    <div class="mobile-topbar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <i class="iconoir-piggy-bank"></i>
+            </div>
+            <div class="header-text-stacked">
+                <div class="baon-text">BaonTracker</div>
+                <div class="pro-wrapper">
+                    <i class="iconoir-sparks gold-icon-sm"></i>
+                    <span class="pro-text">PRO</span>
+                </div>
+            </div>
+        </div>
+        <button id="sidebarToggle">
+            <i class="iconoir-menu"></i>
+        </button>
+    </div>
+
+    <!-- Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="container-fluid">
         <div class="row">
+
             <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
-                <div class="position-sticky pt-3">
-                    <!-- Header: icon with green background + text -->
-                    <div class="sidebar-header-area">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+                <div class="sidebar-inner">
+
+                    <!-- Brand -->
+                    <div class="sidebar-brand">
+                        <div class="brand-icon">
+                            <i class="iconoir-piggy-bank"></i>
+                        </div>
                         <div class="header-text-stacked">
                             <div class="baon-text">BaonTracker</div>
                             <div class="pro-wrapper">
                                 <i class="iconoir-sparks gold-icon-sm"></i>
-                                <span class="pro-text">Pro</span>
+                                <span class="pro-text">PRO</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Navigation menu -->
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
-                                   asp-controller="Home" asp-action="Index">
-                                <i class=""></i> Home
-                            </a>
-                        </li>
+                    <!-- Nav Links -->
+                    <ul class="nav flex-column sidebar-nav">
                         <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
                                    asp-controller="Dashboard" asp-action="Index">
@@ -63,16 +85,28 @@
                         <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "History" ? "active" : "")"
                                    asp-controller="History" asp-action="Index">
-                                <i class="iconoir-clock-rotate-right
-                                "></i> History
+                                <i class="iconoir-clock-rotate-right"></i> History
                             </a>
                         </li>
                     </ul>
 
-                    <hr />
-                    <div class="text-center">
-                        <i class="iconoir-user"></i> Beronica Bayot
+                    <!-- Spacer -->
+                    <div class="sidebar-spacer"></div>
+
+                    <!-- Tip Card -->
+                    <div class="sidebar-tip-card">
+                        <p class="tip-title">Track Smarter 💡</p>
+                        <p class="tip-body">Add your daily expenses to stay on top of your baon!</p>
                     </div>
+
+                    <!-- User Profile -->
+                    <div class="sidebar-user">
+                        <div class="user-avatar">
+                            <i class="iconoir-user"></i>
+                        </div>
+                        <span class="user-name">Beronica Bayot</span>
+                    </div>
+
                 </div>
             </nav>
 
@@ -86,6 +120,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/layout.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
