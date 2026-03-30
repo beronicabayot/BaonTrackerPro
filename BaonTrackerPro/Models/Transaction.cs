@@ -17,5 +17,8 @@ namespace BaonTrackerPro.Models
         public DateTime Date { get; set; }
 
         public string? Description { get; set; }
+
+        // New property for optional notes
+        public string? Notes { get; set; }
     }
 }

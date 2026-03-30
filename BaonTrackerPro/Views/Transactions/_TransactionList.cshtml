@@ -1,0 +1,60 @@
+@model IEnumerable<BaonTrackerPro.Models.Transaction>
+
+@{
+    var grouped = Model.GroupBy(t => t.Date.Date).OrderByDescending(g => g.Key);
+}
+
+@foreach (var group in grouped)
+{
+    <div class="date-group">
+        <h3 class="date-label">@group.Key.ToString("dddd, MMMM d, yyyy")</h3>
+        <div class="transaction-card">
+            @foreach (var transaction in group)
+            {
+                var emoji = "🛒";
+                if (transaction.Category?.ToLower().Contains("transport") == true)
+                    emoji = "🚙";
+                else if (transaction.Category?.ToLower().Contains("food") == true)
+                    emoji = "🍔";
+                else if (transaction.Category?.ToLower().Contains("personal") == true)
+                    emoji = "👗";
+                else if (transaction.Category?.ToLower().Contains("bills") == true)
+                    emoji = "📄";
+                else if (transaction.Category?.ToLower().Contains("entertainment") == true)
+                    emoji = "🎮";
+                else if (transaction.Category?.ToLower().Contains("education") == true)
+                    emoji = "📚";
+                else if (transaction.Category?.ToLower().Contains("health") == true)
+                    emoji = "💊";
+                else if (transaction.Category?.ToLower().Contains("allowance") == true ||
+                         transaction.Description?.ToLower().Contains("allowance") == true)
+                    emoji = "💰";
+
+                var isPositive = transaction.Amount >= 0;
+                var amountClass = isPositive ? "positive-amount" : "negative-amount";
+                var arrowIcon = isPositive ? "iconoir-arrow-up" : "iconoir-arrow-down";
+
+                <div class="transaction-row">
+                    <div class="icon-bg">
+                        <span class="emoji">@emoji</span>
+                    </div>
+                    <div class="transaction-details">
+                        <div class="title">@transaction.Description</div>
+                        <div class="subtitle">@transaction.Category · @transaction.Date.ToString("MMM dd")</div>
+                    </div>
+                    <div class="transaction-amount">
+                        <span class="@amountClass">
+                            <i class="@arrowIcon"></i>
+                            @(isPositive ? "+" : "-") ₱ @Math.Abs(transaction.Amount).ToString("N2")
+                        </span>
+                    </div>
+                    <div class="actions">
+                        <a asp-action="Edit" asp-route-id="@transaction.Id" class="btn btn-sm btn-outline-secondary rounded-pill">
+                            Actions
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

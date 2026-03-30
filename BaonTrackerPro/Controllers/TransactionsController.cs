@@ -50,7 +50,7 @@ namespace BaonTrackerPro.Controllers
         // POST: Transactions/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Amount,Category,Date,Description")] Transaction transaction)
+        public async Task<IActionResult> Create([Bind("Id,Amount,Category,Date,Description,Notes")] Transaction transaction)
         {
             if (ModelState.IsValid)
             {
@@ -58,7 +58,10 @@ namespace BaonTrackerPro.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(transaction);
+
+            // If validation fails, add an error message and redirect back to Index
+            TempData["ErrorMessage"] = "Please fill in all required fields correctly.";
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Transactions/Edit/5
@@ -73,7 +76,7 @@ namespace BaonTrackerPro.Controllers
         // POST: Transactions/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Amount,Category,Date,Description")] Transaction transaction)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Amount,Category,Date,Description,Notes")] Transaction transaction)
         {
             if (id != transaction.Id) return NotFound();
             if (ModelState.IsValid)
@@ -120,5 +123,7 @@ namespace BaonTrackerPro.Controllers
         {
             return _context.Transactions.Any(e => e.Id == id);
         }
+
+
     }
 }
