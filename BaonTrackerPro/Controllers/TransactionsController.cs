@@ -15,10 +15,11 @@ namespace BaonTrackerPro.Controllers
         }
 
         // GET: Transactions
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string searchString, string type)
         {
             IQueryable<Transaction> transactions = _context.Transactions.OrderByDescending(t => t.Date);
 
+            // Apply search filter
             if (!string.IsNullOrEmpty(searchString))
             {
                 transactions = transactions.Where(t =>
@@ -26,9 +27,23 @@ namespace BaonTrackerPro.Controllers
                     (t.Category != null && t.Category.Contains(searchString)));
             }
 
+            // Apply type filter (Income / Expense)
+            if (!string.IsNullOrEmpty(type))
+            {
+                if (type == "Income")
+                {
+                    transactions = transactions.Where(t => t.Amount >= 0);
+                }
+                else if (type == "Expense")
+                {
+                    transactions = transactions.Where(t => t.Amount < 0);
+                }
+            }
+
             var result = await transactions.ToListAsync();
 
             ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentType"] = type;   // keep current type for the dropdown
             return View(result);
         }
 
@@ -124,6 +139,51 @@ namespace BaonTrackerPro.Controllers
             return _context.Transactions.Any(e => e.Id == id);
         }
 
+        // POST: Transactions/Save (Create or Update)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Save([Bind("Id,Amount,Category,Date,Description,Notes")] Transaction transaction)
+        {
+            if (ModelState.IsValid)
+            {
+                if (transaction.Id == 0)
+                {
+                    // New transaction
+                    _context.Add(transaction);
+                }
+                else
+                {
+                    // Update existing
+                    _context.Update(transaction);
+                }
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            // If validation fails, show error
+            TempData["ErrorMessage"] = "Please fill in all required fields correctly.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Transactions/GetTransaction/5
+        [HttpGet]
+        public async Task<IActionResult> GetTransaction(int id)
+        {
+            var transaction = await _context.Transactions.FindAsync(id);
+            if (transaction == null) return NotFound();
+
+            return Json(new
+            {
+                id = transaction.Id,
+                description = transaction.Description,
+                amount = Math.Abs(transaction.Amount),
+                category = transaction.Category,
+                date = transaction.Date.ToString("yyyy-MM-dd"),
+                time = transaction.Date.ToString("HH:mm"),
+                notes = transaction.Notes,
+                isExpense = transaction.Amount < 0
+            });
+        }
 
     }
 }

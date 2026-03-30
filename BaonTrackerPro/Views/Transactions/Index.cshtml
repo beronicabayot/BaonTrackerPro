@@ -13,7 +13,7 @@
     </div>
 }
 <div class="transactions-page">
-
+    @Html.AntiForgeryToken()
     <!-- Header -->
     <div class="header-row">
         <div class="title-section">
@@ -34,17 +34,21 @@
                 <span class="input-group-text bg-transparent border-end-0">
                     <i class="iconoir-search"></i>
                 </span>
-                <input type="text" name="searchString" value="@searchString"
-                       class="form-control border-start-0 ps-0"
+                <input type="text" name="searchString" value="@searchString" class="form-control border-start-0 ps-0"
                        placeholder="Search Transactions" />
             </div>
         </form>
         <div class="filter-dropdown">
-            <select class="form-select" aria-label="Filter by type">
-                <option selected>All Types</option>
-                <option>Income</option>
-                <option>Expense</option>
-            </select>
+            <form asp-action="Index" method="get" id="typeFilterForm">
+                <select name="type" class="form-select" aria-label="Filter by type" onchange="this.form.submit()">
+                    <option value="" selected="@(string.IsNullOrEmpty(ViewData["CurrentType"] as string))">All Types
+                    </option>
+                    <option value="Income" selected="@(ViewData["CurrentType"]?.ToString() == "Income")">Income</option>
+                    <option value="Expense" selected="@(ViewData["CurrentType"]?.ToString() == "Expense")">Expense
+                    </option>
+                </select>
+                <input type="hidden" name="searchString" value="@ViewData["CurrentFilter"]" />
+            </form>
         </div>
     </div>
 
@@ -64,7 +68,7 @@
 
 <!-- Modal Partial -->
 <partial name="_AddTransactionModal" />
-
+<partial name="_DeleteConfirmationModal" />
 @section Scripts {
     <script src="~/js/transactions.js"></script>
 }

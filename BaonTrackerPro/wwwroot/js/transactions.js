@@ -1,3 +1,5 @@
+let transactionToDelete = null;
+
 document.addEventListener('DOMContentLoaded', function () {
 
     // --- Segmented Toggle Logic ---
@@ -122,7 +124,159 @@ document.addEventListener('DOMContentLoaded', function () {
                 timePicker.value = `${hours}:${minutes}`;
             }
             if (dateHidden) dateHidden.value = '';
+
+            // Reset modal title and button text
+            const modalTitle = document.getElementById('addTransactionModalLabel');
+            if (modalTitle) modalTitle.innerText = 'Add Transaction';
+            const submitBtn = document.querySelector('.add-transaction-btn');
+            if (submitBtn) submitBtn.innerText = 'Add Transaction';
+            const transactionId = document.getElementById('TransactionId');
+            if (transactionId) transactionId.value = '0';
         });
     }
 
-});
+    // --- Delete confirmation modal logic ---
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', function() {
+            if (transactionToDelete !== null) {
+                deleteTransaction(transactionToDelete);
+                const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal'));
+                deleteModal.hide();
+                transactionToDelete = null;
+            }
+        });
+    }
+
+    // --- NEW: Type filter dropdown logic ---
+    const filterDropdown = document.querySelector('.filter-dropdown');
+    if (filterDropdown) {
+        const filterItems = filterDropdown.querySelectorAll('.dropdown-item');
+        const filterTrigger = filterDropdown.querySelector('.dropdown-trigger .selected-category-display');
+        const selectedTypeInput = document.getElementById('selectedType');
+        const filterForm = document.getElementById('typeFilterForm');
+
+        if (filterForm && selectedTypeInput) {
+            function updateFilter(selectedValue, selectedText) {
+                if (filterTrigger) filterTrigger.innerText = selectedText;
+                selectedTypeInput.value = selectedValue;
+                filterForm.submit();
+            }
+
+            function setSelectedItem(selectedValue) {
+                filterItems.forEach(item => {
+                    item.classList.remove('selected');
+                    if (item.getAttribute('data-value') === selectedValue) {
+                        item.classList.add('selected');
+                    }
+                });
+            }
+
+            // Attach click handlers
+            filterItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const value = item.getAttribute('data-value');
+                    const displayText = item.innerText.trim(); // "All Types", "Income", "Expense"
+                    setSelectedItem(value);
+                    updateFilter(value, displayText);
+                    // Close the dropdown panel
+                    const panel = item.closest('.dropdown-panel');
+                    if (panel) panel.classList.remove('open');
+                });
+            });
+
+            // Highlight the current selection on page load (based on the trigger's current text)
+            const currentTriggerText = filterTrigger ? filterTrigger.innerText : '';
+            let currentValue = '';
+            if (currentTriggerText === 'Income') currentValue = 'Income';
+            else if (currentTriggerText === 'Expense') currentValue = 'Expense';
+            else currentValue = ''; // All Types
+            setSelectedItem(currentValue);
+            if (selectedTypeInput) selectedTypeInput.value = currentValue;
+        }
+    }
+
+}); // end of DOMContentLoaded
+
+// --- Function to show the custom delete modal ---
+function showDeleteModal(id) {
+    transactionToDelete = id;
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+    deleteModal.show();
+}
+
+// --- Function to load transaction for editing (must be globally accessible) ---
+function editTransaction(id) {
+    fetch(`/Transactions/GetTransaction?id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            // Populate fields
+            document.getElementById('Description').value = data.description;
+            document.getElementById('Amount').value = data.amount;
+            document.getElementById('DatePicker').value = data.date;
+            document.getElementById('TimePicker').value = data.time;
+            document.getElementById('Notes').value = data.notes || '';
+
+            // Set category dropdown
+            const categorySelect = document.getElementById('Category');
+            if (categorySelect) {
+                categorySelect.value = data.category;
+                // Force change event to ensure category options are updated (if needed)
+                categorySelect.dispatchEvent(new Event('change'));
+            }
+
+            // Set Expense/Income toggle
+            const isExpense = data.isExpense;
+            const expenseOption = document.querySelector('.segmented-option[data-type="expense"]');
+            const incomeOption = document.querySelector('.segmented-option[data-type="income"]');
+            if (isExpense) {
+                if (expenseOption) expenseOption.click();
+            } else {
+                if (incomeOption) incomeOption.click();
+            }
+
+            // Set hidden Id field
+            const transactionId = document.getElementById('TransactionId');
+            if (transactionId) transactionId.value = data.id;
+
+            // Change modal title and button text
+            const modalTitle = document.getElementById('addTransactionModalLabel');
+            if (modalTitle) modalTitle.innerText = 'Edit Transaction';
+            const submitBtn = document.querySelector('.add-transaction-btn');
+            if (submitBtn) submitBtn.innerText = 'Update Transaction';
+
+            // Open modal
+            const modal = new bootstrap.Modal(document.getElementById('addTransactionModal'));
+            modal.show();
+        })
+        .catch(error => {
+            console.error('Error loading transaction:', error);
+            alert('Failed to load transaction data.');
+        });
+}
+
+// --- Function to delete transaction (fetch only, no confirm) ---
+function deleteTransaction(id) {
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+    fetch(`/Transactions/Delete/${id}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            '__RequestVerificationToken': token
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            response.text().then(text => alert(`Failed to delete: ${text}`));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred.');
+    });
+}

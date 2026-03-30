@@ -1,0 +1,138 @@
+@model BaonTrackerPro.Models.Transaction
+
+@{
+    ViewData["Title"] = "Transaction Details";
+}
+
+<div class="details-container">
+    <div class="details-card">
+        <h2 class="details-title">@Model.Description</h2>
+        <p class="details-category">@Model.Category</p>
+
+        <div class="details-type">
+            @if (Model.Amount < 0)
+            {
+                <span class="badge-expense">Expense</span>
+            }
+            else
+            {
+                <span class="badge-income">Income</span>
+            }
+        </div>
+
+        <div class="details-fields">
+            <div class="field-row">
+                <span class="field-label">Amount ₱:</span>
+                <span class="field-value @(Model.Amount < 0 ? "text-danger" : "text-success")">
+                    @(Model.Amount < 0 ? "-" : "") @Math.Abs(Model.Amount).ToString("N2")
+                </span>
+            </div>
+            <div class="field-row">
+                <span class="field-label">Date:</span>
+                <span class="field-value">@Model.Date.ToString("MM/dd/yyyy")</span>
+            </div>
+            <div class="field-row">
+                <span class="field-label">Time:</span>
+                <span class="field-value">@Model.Date.ToString("h:mm tt")</span>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <div class="field-row">
+                    <span class="field-label">Notes:</span>
+                    <span class="field-value">@Model.Notes</span>
+                </div>
+            }
+        </div>
+
+        <div class="details-actions">
+            <a asp-action="Index" class="btn-back">Back to List</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .details-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        background-color: #F6F9F8;
+        padding: 2rem;
+    }
+    .details-card {
+        background-color: #ffffff;
+        border-radius: 24px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+        max-width: 500px;
+        width: 100%;
+    }
+    .details-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        color: #1e1e1e;
+    }
+    .details-category {
+        font-size: 1rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+    .badge-expense, .badge-income {
+        display: inline-block;
+        padding: 0.25rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+    .badge-expense {
+        background-color: #dc3545;
+        color: white;
+    }
+    .badge-income {
+        background-color: #27AA83;
+        color: white;
+    }
+    .details-fields {
+        border-top: 1px solid #e9ecef;
+        padding-top: 1rem;
+    }
+    .field-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .field-row:last-child {
+        border-bottom: none;
+    }
+    .field-label {
+        font-weight: 500;
+        color: #6c757d;
+    }
+    .field-value {
+        font-weight: 600;
+        color: #1e1e1e;
+    }
+    .details-actions {
+        margin-top: 2rem;
+        text-align: right;
+    }
+    .btn-back {
+        display: inline-block;
+        background-color: #e9ecef;
+        border: none;
+        color: #495057;
+        padding: 0.5rem 1.5rem;
+        border-radius: 2rem;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.2s;
+    }
+    .btn-back:hover {
+        background-color: #dee2e6;
+        color: #1e1e1e;
+        text-decoration: none;
+    }
+</style>

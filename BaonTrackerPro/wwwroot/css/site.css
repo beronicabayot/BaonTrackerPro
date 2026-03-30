@@ -578,19 +578,23 @@ textarea.form-control {
     display: flex;
     align-items: center;
     gap: 12px;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, color 0.2s;
 }
 
 .dropdown-item .item-icon {
     font-size: 1.2rem;
 }
 
+/* Light green hover */
 .dropdown-item:hover {
-    background-color: #f8f9fa;
+    background-color: rgba(39, 170, 131, 0.12);
+    color: #1E1E1E;   /* dark text, or you can keep the default */
 }
 
+/* Selected item – solid green with white text */
 .dropdown-item.selected {
-    background-color: rgba(39, 170, 131, 0.1);
+    background-color: #27AA83;
+    color: white;
     position: relative;
 }
 
@@ -598,7 +602,7 @@ textarea.form-control {
     content: "✓";
     position: absolute;
     right: 16px;
-    color: #27AA83;
+    color: white;
     font-weight: bold;
 }
 
@@ -692,4 +696,59 @@ textarea.form-control {
     .sidebar.open {
         transform: translateX(0);
     }
+}
+/* Keep the Actions button readable when dropdown is open */
+.actions .btn-outline-secondary.dropdown-toggle.show {
+    background-color: #f8f9fa !important;
+    border-color: #adb5bd !important;
+    color: #495057 !important;
+    box-shadow: none !important;
+}
+
+/* Ensure the button text stays dark on hover as well */
+.actions .btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    border-color: #adb5bd;
+    color: #495057;
+}
+
+.transaction-amount {
+    min-width: 130px;
+    text-align: right;
+    margin-right: 0.75rem;
+}
+
+.actions {
+    flex-shrink: 0;
+    position: relative;
+    overflow: visible !important;
+}
+
+.transaction-card,
+.transaction-row {
+    overflow: visible !important;
+}
+
+.dropdown-menu {
+    z-index: 2000 !important;
+}
+
+@media (max-width: 768px) {
+    .transaction-amount {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+        text-align: left;
+    }
+}
+.sidebar-toggle-btn {
+    font-size: 1.5rem;
+    padding: 0;
+    color: #27AA83;
+}
+.sidebar-toggle-btn:hover {
+    color: #000000;
+}
+
+.sidebar.collapsed {
+    display: none;
 }

@@ -13,15 +13,16 @@
                     <div class="segmented-option" data-type="income">Income</div>
                 </div>
 
-                <form id="addTransactionForm" asp-action="Create" asp-controller="Transactions" method="post">
+                <form id="addTransactionForm" asp-action="Save" asp-controller="Transactions" method="post">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="TransactionType" id="TransactionType" value="expense" />
+                    <input type="hidden" name="Id" id="TransactionId" value="0" />
 
                     <!-- Description -->
                     <div class="mb-3">
                         <label for="Description" class="form-label">Description</label>
                         <input type="text" class="form-control" id="Description" name="Description"
-                               placeholder="e.g., Lunch at Cafeteria" required />
+                               placeholder="e.g., Lunch, Salary, Gift" required />
                     </div>
 
                     <!-- Row: Amount, Date, Time -->

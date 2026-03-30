@@ -49,9 +49,34 @@
                         </span>
                     </div>
                     <div class="actions">
-                        <a asp-action="Edit" asp-route-id="@transaction.Id" class="btn btn-sm btn-outline-secondary rounded-pill">
-                            Actions
-                        </a>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                Actions
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void(0)"
+                                           onclick="editTransaction(@transaction.Id)">
+                                        <i class="iconoir-edit-pencil"></i> Edit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-action="Details" asp-route-id="@transaction.Id">
+                                        <i class="iconoir-info-circle"></i> Details
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="javascript:void(0)"
+                                           onclick="showDeleteModal(@transaction.Id)">
+                                        <i class="iconoir-trash"></i> Delete
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             }
