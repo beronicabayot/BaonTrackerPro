@@ -752,3 +752,13 @@ textarea.form-control {
 .sidebar.collapsed {
     display: none;
 }
+
+/* Light green for income */
+.icon-bg.income-bg {
+    background-color: rgba(39, 170, 131, 0.15); /* #27AA83 at 15% opacity */
+}
+
+/* Light red for expense */
+.icon-bg.expense-bg {
+    background-color: rgba(220, 53, 69, 0.15); /* #dc3545 at 15% opacity */
+}

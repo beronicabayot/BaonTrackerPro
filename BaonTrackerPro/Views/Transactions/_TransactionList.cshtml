@@ -35,7 +35,7 @@
                 var arrowIcon = isPositive ? "iconoir-arrow-up" : "iconoir-arrow-down";
 
                 <div class="transaction-row">
-                    <div class="icon-bg">
+                    <div class="icon-bg @(isPositive ? "income-bg" : "expense-bg")">
                         <span class="emoji">@emoji</span>
                     </div>
                     <div class="transaction-details">
