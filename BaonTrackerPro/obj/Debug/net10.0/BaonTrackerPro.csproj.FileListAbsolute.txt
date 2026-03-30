@@ -176,7 +176,6 @@ C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\rjsmcsht
 C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\scopedcss\bundle\BaonTrackerPro.styles.css
 C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\scopedcss\projectbundle\BaonTrackerPro.bundle.scp.css
-C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\compressed\vemqhuqv70-{0}-b9sayid5wm-b9sayid5wm.gz
 C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\compressed\cpd4dtydp7-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\compressed\jee8pvy6rt-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\compressed\b3uxj5osyi-{0}-bqjiyaj88i-bqjiyaj88i.gz
@@ -251,3 +250,4 @@ C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\refint\B
 C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\BaonTrackerPro.pdb
 C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\BaonTrackerPro.genruntimeconfig.cache
 C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\ref\BaonTrackerPro.dll
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\compressed\vemqhuqv70-{0}-gpf3w3mmib-gpf3w3mmib.gz
