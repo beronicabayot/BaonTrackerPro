@@ -16,5 +16,7 @@ namespace BaonTrackerPro.Models
         public decimal CurrentAmount { get; set; }
 
         public DateTime? Deadline { get; set; }
+
+        public string? Notes { get; set; }  // 👈 added this
     }
 }

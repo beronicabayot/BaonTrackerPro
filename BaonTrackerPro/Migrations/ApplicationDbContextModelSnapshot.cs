@@ -30,12 +30,22 @@ namespace BaonTrackerPro.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("AmountLimit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("BudgetMonth")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("MonthlyAmount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Period")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -58,6 +68,9 @@ namespace BaonTrackerPro.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TargetAmount")

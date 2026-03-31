@@ -1,6 +1,6 @@
 <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel"
      aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content custom-modal">
             <div class="modal-header border-0">
                 <h5 class="modal-title" id="addTransactionModalLabel">Add Transaction</h5>
@@ -13,7 +13,8 @@
                     <div class="segmented-option" data-type="income">Income</div>
                 </div>
 
-                <form id="addTransactionForm" asp-action="Save" asp-controller="Transactions" method="post">
+                <form id="addTransactionForm" asp-action="Save" asp-controller="Transactions" method="post"
+                      onsubmit="resolveTransactionOthers()">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="TransactionType" id="TransactionType" value="expense" />
                     <input type="hidden" name="Id" id="TransactionId" value="0" />
@@ -46,9 +47,16 @@
                     <!-- Category Dropdown — populated dynamically by JS -->
                     <div class="mb-3">
                         <label for="Category" class="form-label">Category</label>
-                        <select class="form-select" id="Category" name="Category" required>
+                        <select class="form-select" id="Category" name="Category" required
+                                onchange="handleTransactionCategoryChange(this)">
                             <option value="" disabled selected>Select category</option>
                         </select>
+
+                        <!-- Please specify — right below the select, outside it -->
+                        <div id="transactionOthersInput" style="display:none; margin-top: 0.75rem;">
+                            <input type="text" class="form-control" id="transactionOthersSpecify"
+                                   placeholder="Please specify..." />
+                        </div>
                     </div>
 
                     <!-- Notes (optional) -->

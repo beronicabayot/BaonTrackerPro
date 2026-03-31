@@ -1928,5 +1928,7 @@ C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\refint\B
 C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\BaonTrackerPro.pdb
 C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\BaonTrackerPro.genruntimeconfig.cache
 C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\ref\BaonTrackerPro.dll
-C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\compressed\vemqhuqv70-{0}-26ekcm5gb9-26ekcm5gb9.gz
-C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\compressed\7h9ufnpqm0-{0}-sn7e4dzr1u-sn7e4dzr1u.gz
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\compressed\vemqhuqv70-{0}-nl9dj74s79-nl9dj74s79.gz
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\compressed\xj047m7u8w-{0}-4lo6wah164-4lo6wah164.gz
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\compressed\ry16x3pssa-{0}-6kintptdet-6kintptdet.gz
+C:\Users\Badeth\Desktop\BaonTrackerPro\BaonTrackerPro\obj\Debug\net10.0\compressed\7h9ufnpqm0-{0}-amk0at07gn-amk0at07gn.gz

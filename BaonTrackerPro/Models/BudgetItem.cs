@@ -10,6 +10,13 @@ namespace BaonTrackerPro.Models
         public string Category { get; set; } = string.Empty;
 
         [Required]
-        public decimal MonthlyAmount { get; set; }
+        public decimal AmountLimit { get; set; }
+
+        [Required]
+        public string Period { get; set; } = "Monthly";
+
+        public DateTime BudgetMonth { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

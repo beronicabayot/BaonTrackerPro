@@ -23,8 +23,7 @@ namespace BaonTrackerPro.ViewComponents
                 .Where(t => t.Date >= startOfMonth && t.Date <= endOfMonth)
                 .SumAsync(t => t.Amount);
 
-            var totalBudget = await _context.BudgetItems.SumAsync(b => b.MonthlyAmount);
-
+            var totalBudget = await _context.BudgetItems.SumAsync(b => b.AmountLimit);
             var remainingBudget = totalBudget - totalExpenses;
 
             return View(remainingBudget);

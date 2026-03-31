@@ -30,12 +30,20 @@ build_property._RazorSourceGeneratorDebug =
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
+[C:/Users/Badeth/Desktop/BaonTrackerPro/BaonTrackerPro/Views/Budget/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQnVkZ2V0XEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Badeth/Desktop/BaonTrackerPro/BaonTrackerPro/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Badeth/Desktop/BaonTrackerPro/BaonTrackerPro/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Badeth/Desktop/BaonTrackerPro/BaonTrackerPro/Views/SavingsGoals/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2F2aW5nc0dvYWxzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Badeth/Desktop/BaonTrackerPro/BaonTrackerPro/Views/Shared/Components/Sidebar/Default.cshtml]

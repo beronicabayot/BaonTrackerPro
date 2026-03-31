@@ -1,0 +1,280 @@
+@model IEnumerable<BaonTrackerPro.Controllers.BudgetItemViewModel>
+
+@{
+    ViewData["Title"] = "Budget";
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="budget-page">
+    <div class="header-row">
+        <div class="title-section">
+            <h1>Budget</h1>
+            <p>@DateTime.ParseExact(ViewBag.SelectedMonth, "yyyy-MM", null).ToString("MMMM yyyy") Spending Limits</p>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="month-nav">
+                @{
+                    var current = DateTime.ParseExact(ViewBag.SelectedMonth, "yyyy-MM", null);
+                    var prev = current.AddMonths(-1).ToString("yyyy-MM");
+                    var next = current.AddMonths(1).ToString("yyyy-MM");
+                }
+                <a href="?month=@prev" class="month-nav-btn"><i class="iconoir-nav-arrow-left"></i></a>
+                <span class="month-nav-label">@current.ToString("MMM yyyy")</span>
+                <a href="?month=@next" class="month-nav-btn"><i class="iconoir-nav-arrow-right"></i></a>
+            </div>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#setBudgetModal">
+                + Set Budget
+            </button>
+        </div>
+    </div>
+
+    <div class="budget-filter-row">
+        <div class="dropdown">
+            <button class="budget-filter-btn" type="button" id="periodDropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="iconoir-filter"></i>
+                <span id="filterLabel">All Types</span>
+                <i class="iconoir-nav-arrow-down"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="periodDropdown">
+                <li><a class="dropdown-item" href="#" onclick="filterBudget('All', 'All Types')">All Types</a></li>
+                <li><a class="dropdown-item" href="#" onclick="filterBudget('Weekly', 'Weekly')">Weekly</a></li>
+                <li><a class="dropdown-item" href="#" onclick="filterBudget('Monthly', 'Monthly')">Monthly</a></li>
+            </ul>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <i class="iconoir-piggy-bank" style="font-size: 3rem; color: #adb5bd;"></i>
+            <p>No budgets yet. Set your first budget!</p>
+        </div>
+    }
+    else
+    {
+        <div class="budget-grid" id="budgetGrid">
+            @foreach (var item in Model)
+            {
+                var emoji = item.BudgetItem.Category switch
+                {
+                    "Food & Drinks" => "🍔",
+                    "Transportation" => "🚕",
+                    "Personal/Lifestyle" => "👗",
+                    "Bills & Utilities" => "📄",
+                    "Entertainment" => "🎮",
+                    "Education" => "📚",
+                    "Health" => "💊",
+                    "Allowance" => "🎒",
+                    "Salary" => "💼",
+                    "Bonus" => "🎉",
+                    "Gift" => "🎁",
+                    _ => "📦"
+                };
+
+                var progressColor = item.Percentage >= 90 ? "#dc3545" :
+                                    item.Percentage >= 70 ? "#fd7e14" : "#27AA83";
+
+                <div class="budget-card" data-period="@item.BudgetItem.Period">
+                    <div class="budget-card-header">
+                        <div class="budget-icon-title">
+                            <span class="budget-emoji">@emoji</span>
+                            <div>
+                                <div class="budget-title">@item.BudgetItem.Category</div>
+                                <span class="budget-period-badge">@item.BudgetItem.Period</span>
+                            </div>
+                        </div>
+                        <div class="budget-actions">
+                            <button class="budget-action-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editBudgetModal"
+                                    data-id="@item.BudgetItem.Id"
+                                    data-category="@item.BudgetItem.Category"
+                                    data-amount="@item.BudgetItem.AmountLimit"
+                                    data-period="@item.BudgetItem.Period">
+                                <i class="iconoir-edit-pencil"></i>
+                            </button>
+                            <!-- Updated: now triggers confirmation modal instead of confirm() -->
+                            <button type="button" class="budget-action-btn delete-btn"
+                                    onclick="showBudgetDeleteModal(@item.BudgetItem.Id)">
+                                <i class="iconoir-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="budget-progress-bar">
+                        <div class="budget-progress-fill"
+                             style="width: @item.Percentage.ToString("F0")%; background-color: @progressColor;">
+                        </div>
+                    </div>
+
+                    <div class="budget-amounts">
+                        <span class="budget-spent">₱@item.Spent.ToString("F2") spent</span>
+                        <span class="budget-limit">of ₱@item.BudgetItem.AmountLimit.ToString("F2")</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- Set Budget Modal -->
+<div class="modal fade" id="setBudgetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Set Budget</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Create" asp-controller="Budget" method="post" onsubmit="resolveOthers()">
+                    @Html.AntiForgeryToken()
+
+                    <!-- Category -->
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" name="Category" id="categorySelect" required
+                                onchange="handleCategoryChange(this)">
+                            <option value="" disabled selected>Select category</option>
+                            <option value="Food & Drinks">🍔 Food & Drinks</option>
+                            <option value="Transportation">🚕 Transportation</option>
+                            <option value="Personal/Lifestyle">👗 Personal/Lifestyle</option>
+                            <option value="Bills & Utilities">📄 Bills & Utilities</option>
+                            <option value="Entertainment">🎮 Entertainment</option>
+                            <option value="Education">📚 Education</option>
+                            <option value="Health">💊 Health</option>
+                            <option value="Allowance">🎒 Allowance</option>
+                            <option value="Salary">💼 Salary</option>
+                            <option value="Bonus">🎉 Bonus</option>
+                            <option value="Gift">🎁 Gift</option>
+                            <option value="Others">📦 Others</option>
+                        </select>
+                        <div id="othersInput" style="display:none; margin-top: 0.75rem;">
+                            <input type="text" class="form-control" id="othersSpecify"
+                                   placeholder="Please specify..." />
+                        </div>
+                    </div>
+
+                    <!-- Amount Limit -->
+                    <div class="mb-3">
+                        <label class="form-label">Amount Limit (₱)</label>
+                        <input type="number" step="0.01" class="form-control"
+                               name="AmountLimit" placeholder="0.00" required />
+                    </div>
+
+                    <!-- Month -->
+                    <div class="mb-3">
+                        <label class="form-label">Month</label>
+                        <input type="month" class="form-control" name="BudgetMonth"
+                               id="budgetMonth" value="@DateTime.Now.ToString("yyyy-MM")" required />
+                    </div>
+
+                    <!-- Period -->
+                    <div class="mb-4">
+                        <label class="form-label">Period</label>
+                        <select class="form-select" name="Period" required>
+                            <option value="Monthly">Monthly</option>
+                            <option value="Weekly">Weekly</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 add-transaction-btn">Set Budget</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Budget Modal -->
+<div class="modal fade" id="editBudgetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Edit Budget</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Edit" asp-controller="Budget" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="Id" id="editId" />
+
+                    <!-- Category -->
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" name="Category" id="editCategorySelect" required
+                                onchange="handleEditCategoryChange(this)">
+                            <option value="Food & Drinks">🍔 Food & Drinks</option>
+                            <option value="Transportation">🚕 Transportation</option>
+                            <option value="Personal/Lifestyle">👗 Personal/Lifestyle</option>
+                            <option value="Bills & Utilities">📄 Bills & Utilities</option>
+                            <option value="Entertainment">🎮 Entertainment</option>
+                            <option value="Education">📚 Education</option>
+                            <option value="Health">💊 Health</option>
+                            <option value="Allowance">🎒 Allowance</option>
+                            <option value="Salary">💼 Salary</option>
+                            <option value="Bonus">🎉 Bonus</option>
+                            <option value="Gift">🎁 Gift</option>
+                            <option value="Others">📦 Others</option>
+                        </select>
+                        <div id="editOthersInput" style="display:none; margin-top: 0.75rem;">
+                            <input type="text" class="form-control" id="editOthersSpecify"
+                                   placeholder="Please specify..." />
+                        </div>
+                    </div>
+
+                    <!-- Amount Limit -->
+                    <div class="mb-3">
+                        <label class="form-label">Amount Limit (₱)</label>
+                        <input type="number" step="0.01" class="form-control"
+                               name="AmountLimit" id="editAmount" placeholder="0.00" required />
+                    </div>
+
+                    <!-- Period -->
+                    <div class="mb-4">
+                        <label class="form-label">Period</label>
+                        <select class="form-select" name="Period" id="editPeriod" required>
+                            <option value="Monthly">Monthly</option>
+                            <option value="Weekly">Weekly</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 add-transaction-btn">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Budget Confirmation Modal -->
+<div class="modal fade" id="deleteBudgetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to <span class="text-danger fw-bold">delete</span> this budget?</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">No</button>
+                <form id="deleteBudgetForm" asp-action="Delete" asp-controller="Budget" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="deleteBudgetId" name="id" value="" />
+                    <button type="submit" class="btn btn-danger">Delete Permanently</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/budget.js"></script>
+}

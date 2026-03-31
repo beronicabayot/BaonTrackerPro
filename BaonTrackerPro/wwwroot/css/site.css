@@ -762,3 +762,180 @@ textarea.form-control {
 .icon-bg.expense-bg {
     background-color: rgba(220, 53, 69, 0.15); /* #dc3545 at 15% opacity */
 }
+
+/* ==================== Budget Page ==================== */
+.budget-page {
+    width: 100%;
+    margin: 0;
+    padding: 2rem;
+    background-color: #F6F9F8;
+    min-height: 100vh;
+}
+
+.budget-filter-row {
+    margin-bottom: 2rem;
+}
+
+.budget-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 2rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1e1e1e;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.budget-filter-btn:hover {
+    border-color: #adb5bd;
+    background-color: #f8f9fa;
+}
+
+.budget-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.budget-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    padding: 1.25rem 1.5rem;
+}
+
+.budget-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.budget-icon-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.budget-emoji {
+    font-size: 1.8rem;
+}
+
+.budget-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #1e1e1e;
+}
+
+.budget-period-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px;
+    background-color: #e0f0ff;
+    color: #3b82f6;
+    margin-top: 2px;
+}
+
+.budget-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.budget-action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #adb5bd;
+    font-size: 1rem;
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+.budget-action-btn:hover {
+    color: #495057;
+}
+
+.budget-action-btn.delete-btn:hover {
+    color: #dc3545;
+}
+
+.budget-progress-bar {
+    background-color: #d1f0e6;
+    border-radius: 999px;
+    height: 8px;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+}
+
+.budget-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}
+
+.budget-amounts {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
+.budget-spent {
+    font-weight: 600;
+    color: #1e1e1e;
+}
+
+.budget-limit {
+    color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .budget-page {
+        padding: 1rem;
+    }
+    .budget-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Month Navigation */
+.month-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 2rem;
+    padding: 0.4rem 1rem;
+}
+
+.month-nav-btn {
+    color: #495057;
+    text-decoration: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+.month-nav-btn:hover {
+    color: #27AA83;
+}
+
+.month-nav-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1e1e1e;
+    min-width: 80px;
+    text-align: center;
+}
+#addTransactionModal .modal-dialog {
+    max-width: 520px;
+}

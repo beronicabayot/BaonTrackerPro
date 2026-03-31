@@ -41,7 +41,7 @@
         <div class="filter-dropdown">
             <form asp-action="Index" method="get" id="typeFilterForm">
                 <select name="type" class="form-select" aria-label="Filter by type" onchange="this.form.submit()">
-                    <option value="" selected="@(string.IsNullOrEmpty(ViewData["CurrentType"] as string))">All Types
+                    <option value="" selected="@(string.IsNullOrEmpty(ViewData["CurrentType"] as string))">All Types 
                     </option>
                     <option value="Income" selected="@(ViewData["CurrentType"]?.ToString() == "Income")">Income</option>
                     <option value="Expense" selected="@(ViewData["CurrentType"]?.ToString() == "Expense")">Expense
