@@ -66,6 +66,9 @@ namespace BaonTrackerPro.Migrations
                     b.Property<DateTime?>("Deadline")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsDone")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

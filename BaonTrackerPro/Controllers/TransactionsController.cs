@@ -48,6 +48,25 @@ namespace BaonTrackerPro.Controllers
             if (transaction == null) return NotFound();
             return View(transaction);
         }
+        // GET: Transactions/DetailsJson/5
+        [HttpGet]
+        public async Task<IActionResult> DetailsJson(int id)
+        {
+            var transaction = await _context.Transactions.FindAsync(id);
+            if (transaction == null) return NotFound();
+
+            return Json(new
+            {
+                description = transaction.Description,
+                category = transaction.Category,
+                amount = transaction.Amount,
+                absAmount = Math.Abs(transaction.Amount).ToString("N2"),
+                isExpense = transaction.Amount < 0,
+                date = transaction.Date.ToString("MM/dd/yyyy"),
+                time = transaction.Date.ToString("h:mm tt"),
+                notes = transaction.Notes
+            });
+        }
 
         // GET: Transactions/Create
         public IActionResult Create()
@@ -188,20 +207,20 @@ namespace BaonTrackerPro.Controllers
 
             transactions = sort switch
             {
-                "amount_asc"  => transactions.OrderBy(t => t.Amount),
+                "amount_asc" => transactions.OrderBy(t => t.Amount),
                 "amount_desc" => transactions.OrderByDescending(t => t.Amount),
-                "date_asc"    => transactions.OrderBy(t => t.Date),
-                _             => transactions.OrderByDescending(t => t.Date)
+                "date_asc" => transactions.OrderBy(t => t.Date),
+                _ => transactions.OrderByDescending(t => t.Date)
             };
 
             var result = await transactions.ToListAsync();
 
-            ViewBag.SelectedMonth    = selectedMonth;
-            ViewBag.SelectedType     = type ?? "";
-            ViewBag.SelectedSort     = sort ?? "date_desc";
-            ViewBag.TotalSpent       = result.Where(t => t.Amount < 0).Sum(t => t.Amount);
-            ViewBag.TotalReceived    = result.Where(t => t.Amount >= 0).Sum(t => t.Amount);
-            ViewBag.Net              = result.Sum(t => t.Amount);
+            ViewBag.SelectedMonth = selectedMonth;
+            ViewBag.SelectedType = type ?? "";
+            ViewBag.SelectedSort = sort ?? "date_desc";
+            ViewBag.TotalSpent = result.Where(t => t.Amount < 0).Sum(t => t.Amount);
+            ViewBag.TotalReceived = result.Where(t => t.Amount >= 0).Sum(t => t.Amount);
+            ViewBag.Net = result.Sum(t => t.Amount);
 
             return View(result);
         }

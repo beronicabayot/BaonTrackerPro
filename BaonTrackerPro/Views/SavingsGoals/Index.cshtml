@@ -20,6 +20,44 @@
         </div>
     </div>
 
+    <!-- Net Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="summary-card">
+                <div class="summary-label">NET (Income - Expense)</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="summary-amount @(ViewBag.Net >= 0 ? "text-success" : "text-danger")">
+                        @(ViewBag.Net >= 0 ? "+" : "")₱@Math.Abs((decimal)ViewBag.Net).ToString("N2")
+                    </div>
+                    <i class="iconoir-wallet" style="font-size:1.5rem; color:#27AA83; opacity:0.7;"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-card">
+                <div class="summary-label">EXPECTED SPENT (Goals)</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="summary-amount text-danger">
+                        -₱@(((decimal)ViewBag.ExpectedSpent).ToString("N2"))
+                    </div>
+                    <i class="iconoir-piggy-bank" style="font-size:1.5rem; color:#dc3545; opacity:0.7;"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-card">
+                <div class="summary-label">EXPECTED NET</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="summary-amount @((decimal)ViewBag.ExpectedNet >= 0 ? "text-success" : "text-danger")">
+                        @((decimal)ViewBag.ExpectedNet >= 0 ? "+" :
+             "")₱@Math.Abs((decimal)ViewBag.ExpectedNet).ToString("N2")
+                    </div>
+                    <i class="iconoir-graph-up" style="font-size:1.5rem; color:#27AA83; opacity:0.7;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @if (!Model.Any())
     {
         <div class="empty-state">
@@ -41,7 +79,6 @@
                 var progressColor = percentage >= 100 ? "#27AA83" :
                                     percentage >= 70 ? "#fd7e14" : "#4A90D9";
 
-                var isCompleted = percentage >= 100;
                 var deadlineStr = goal.Deadline?.ToString("yyyy-MM-dd") ?? "";
                 var notesStr = goal.Notes ?? "";
 
@@ -94,10 +131,13 @@
                         <span class="budget-limit">of ₱@goal.TargetAmount.ToString("F2")</span>
                     </div>
 
-                    @if (isCompleted)
-                    {
-                        <div class="text-success small fw-bold mt-1">🎉 Goal Reached!</div>
-                    }
+                    <!-- Mark as Done Button -->
+                    <div class="d-flex justify-content-end mt-2">
+                        <button type="button" class="mark-done-btn"
+                                onclick="showMarkAsDoneModal(@goal.Id, '@goal.Name', @goal.TargetAmount)">
+                            ✓ Mark as Done
+                        </button>
+                    </div>
                 </div>
             }
         </div>
@@ -120,23 +160,26 @@
                         <input type="text" class="form-control" name="Name"
                                placeholder="e.g., New Laptop, Emergency Fund" required />
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Target Amount (₱)</label>
-                        <input type="number" step="0.01" class="form-control" name="TargetAmount" placeholder="0.00"
-                               required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Current Amount (₱)</label>
-                        <input type="number" step="0.01" class="form-control" name="CurrentAmount" placeholder="0.00"
-                               value="0" required />
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Target Amount (₱)</label>
+                            <input type="number" step="0.01" class="form-control" name="TargetAmount" placeholder="0.00"
+                                   required />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Current Amount (₱)</label>
+                            <input type="number" step="0.01" class="form-control" name="CurrentAmount"
+                                   placeholder="0.00" value="0" required />
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Deadline</label>
-                        <input type="date" class="form-control" name="Deadline" required />
+                        <input type="date" class="form-control" name="Deadline"
+                               min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
                     </div>
                     <div class="mb-4">
                         <label class="form-label">Notes (optional)</label>
-                        <textarea class="form-control" name="Notes" rows="2" placeholder="Add notes..."></textarea>
+                        <textarea class="form-control" name="Notes" rows="3" placeholder="Add notes..."></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary w-100 add-transaction-btn">
                         Create Goal
@@ -194,50 +237,86 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p class="text-muted mb-1">Goal: <strong id="addFundsGoalName"></strong></p>
-                <p class="text-muted mb-3">
-                    Progress: <strong id="addFundsProgress"></strong>
-                </p>
-                <form asp-action="AddFunds" asp-controller="SavingsGoals" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" id="addFundsGoalId" />
-                    <div class="mb-4">
-                        <label class="form-label">Amount to Add (₱)</label>
-                        <input type="number" step="0.01" class="form-control" name="amount" placeholder="0.00"
-                               required />
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 add-transaction-btn">
-                        Add Funds
-                    </button>
-                </form>
+                <p class="mb-1">Goal: <strong id="addFundsGoalName"></strong></p>
+                <p class="mb-3">Progress: <strong id="addFundsProgress"></strong></p>
+                <p class="mb-3 text-muted small">Remaining: <strong id="addFundsRemaining"
+                                                                        class="text-success"></strong></p>
+                    <form asp-action="AddFunds" asp-controller="SavingsGoals" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" id="addFundsGoalId" />
+                        <input type="hidden" id="addFundsTarget" />
+                        <div class="segmented-control mb-3">
+                            <div class="segmented-option active" id="addOption" onclick="setFundsAction('add')">Add</div>
+                            <div class="segmented-option" id="deductOption" onclick="setFundsAction('deduct')">Deduct</div>
+                        </div>
+                        <input type="hidden" name="fundAction" id="fundsAction" value="add" />
+                        <div class="mb-4">
+                            <label class="form-label">Amount (₱)</label>
+                            <input type="number" step="0.01" class="form-control" name="amount" id="fundsAmount"
+                                   placeholder="0.00" required oninput="capAmount()" min="0" />
+                            <div id="capMessage" style="display:none; color:#dc3545;" class="small mt-1">
+                                ⚠️ Amount adjusted to remaining balance.
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 add-transaction-btn">
+                            Confirm
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Delete Goal Confirmation Modal -->
-<div class="modal fade" id="deleteGoalModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content custom-modal">
-            <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold">Confirm Deletion</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to <span class="text-danger fw-bold">delete</span> this savings goal?</p>
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">No</button>
-                <form id="deleteGoalForm" asp-action="Delete" asp-controller="SavingsGoals" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" id="deleteGoalId" name="id" />
-                    <button type="submit" class="btn btn-danger">Delete Permanently</button>
-                </form>
+    <!-- Delete Goal Confirmation Modal -->
+    <div class="modal fade" id="deleteGoalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content custom-modal">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to <span class="text-danger fw-bold">delete</span> this savings goal?</p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">No</button>
+                    <form id="deleteGoalForm" asp-action="Delete" asp-controller="SavingsGoals" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" id="deleteGoalId" name="id" />
+                        <button type="submit" class="btn btn-danger">Delete Permanently</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-@section Scripts {
-    <script src="~/js/savings.js"></script>
-}
+    <!-- Mark as Done Confirmation Modal -->
+    <div class="modal fade" id="markAsDoneModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content custom-modal">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Mark as Done</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to mark <strong id="markAsDoneGoalName"></strong> as done?</p>
+                    <p class="text-muted small">This will deduct
+                        <strong id="markAsDoneAmount" class="text-danger"></strong>
+                        from your net and move it to Goals Reached.
+                    </p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
+                    <form asp-action="MarkAsDone" asp-controller="SavingsGoals" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" id="markAsDoneGoalId" name="id" />
+                        <button type="submit" class="btn btn-success" style="border-radius: 6px;">Yes, Mark as Done</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script src="~/js/savings.js"></script>
+    }

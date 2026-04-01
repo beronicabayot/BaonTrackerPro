@@ -22,6 +22,12 @@ namespace BaonTrackerPro.Controllers
 
             var parsedMonth = DateTime.ParseExact(selectedMonth, "yyyy-MM", null);
 
+            // ✅ Fetch ALL transactions for the month first (for summary cards)
+            var allForMonth = await _context.Transactions
+                .Where(t => t.Date.Year == parsedMonth.Year && t.Date.Month == parsedMonth.Month)
+                .ToListAsync();
+
+            // ✅ Then apply filter + sort on a separate query for the list
             IQueryable<Transaction> transactions = _context.Transactions
                 .Where(t => t.Date.Year == parsedMonth.Year && t.Date.Month == parsedMonth.Month);
 
@@ -30,22 +36,23 @@ namespace BaonTrackerPro.Controllers
             else if (type == "Expense")
                 transactions = transactions.Where(t => t.Amount < 0);
 
-            // Fetch first, then sort in memory to avoid EF translation issues
             var result = await transactions.ToListAsync();
 
             result = sort switch
             {
                 "amount_desc" => result.OrderByDescending(t => Math.Abs(t.Amount)).ToList(),
-                "amount_asc"  => result.OrderBy(t => Math.Abs(t.Amount)).ToList(),
-                _             => result.OrderByDescending(t => t.Date).ToList()
+                "amount_asc" => result.OrderBy(t => Math.Abs(t.Amount)).ToList(),
+                _ => result.OrderByDescending(t => t.Date).ToList()
             };
 
-            ViewBag.SelectedMonth  = selectedMonth;
-            ViewBag.SelectedType   = type ?? "";
-            ViewBag.SelectedSort   = sort ?? "";
-            ViewBag.TotalSpent     = result.Where(t => t.Amount < 0).Sum(t => t.Amount);
-            ViewBag.TotalReceived  = result.Where(t => t.Amount >= 0).Sum(t => t.Amount);
-            ViewBag.Net            = result.Sum(t => t.Amount);
+            ViewBag.SelectedMonth = selectedMonth;
+            ViewBag.SelectedType = type ?? "";
+            ViewBag.SelectedSort = sort ?? "";
+
+            // ✅ Always based on full month, never filtered
+            ViewBag.TotalSpent = allForMonth.Where(t => t.Amount < 0).Sum(t => t.Amount);
+            ViewBag.TotalReceived = allForMonth.Where(t => t.Amount >= 0).Sum(t => t.Amount);
+            ViewBag.Net = allForMonth.Sum(t => t.Amount);
 
             return View(result);
         }

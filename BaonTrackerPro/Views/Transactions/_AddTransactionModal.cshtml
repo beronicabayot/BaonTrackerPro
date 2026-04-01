@@ -1,13 +1,14 @@
 <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel"
      aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content custom-modal">
             <div class="modal-header border-0">
                 <h5 class="modal-title" id="addTransactionModalLabel">Add Transaction</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Segmented Control: Expense / Income -->
+
+                <!-- Segmented Control -->
                 <div class="segmented-control mb-4">
                     <div class="segmented-option active" data-type="expense">Expense</div>
                     <div class="segmented-option" data-type="income">Income</div>
@@ -26,51 +27,95 @@
                                placeholder="e.g., Lunch, Salary, Gift" required />
                     </div>
 
-                    <!-- Row: Amount, Date, Time -->
+                    <!-- Amount full width on mobile, side by side on md+ -->
+                    <div class="mb-3">
+                        <label for="Amount" class="form-label">Amount (₱)</label>
+                        <input type="number" step="0.01" class="form-control" id="Amount" name="Amount"
+                               placeholder="0.00" required />
+                    </div>
+
+                    <!-- Date and Time side by side always -->
                     <div class="row g-3 mb-3">
-                        <div class="col-md-4">
-                            <label for="Amount" class="form-label">Amount (₱)</label>
-                            <input type="number" step="0.01" class="form-control" id="Amount" name="Amount"
-                                   placeholder="0.00" required />
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-6">
                             <label for="DatePicker" class="form-label">Date</label>
                             <input type="date" class="form-control" id="DatePicker" />
                             <input type="hidden" id="Date" name="Date" />
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-6">
                             <label for="TimePicker" class="form-label">Time</label>
                             <input type="time" class="form-control" id="TimePicker" />
                         </div>
                     </div>
 
-                    <!-- Category Dropdown — populated dynamically by JS -->
+                    <!-- Category -->
                     <div class="mb-3">
                         <label for="Category" class="form-label">Category</label>
                         <select class="form-select" id="Category" name="Category" required
                                 onchange="handleTransactionCategoryChange(this)">
                             <option value="" disabled selected>Select category</option>
                         </select>
-
-                        <!-- Please specify — right below the select, outside it -->
-                        <!-- <div id="transactionOthersInput" style="display:none; margin-top: 0.75rem;">
-                            <input type="text" class="form-control" id="transactionOthersSpecify"
-                                   placeholder="Please specify..." />
-                        </div> -->
                     </div>
 
-                    <!-- Notes (optional) -->
+                    <!-- Notes -->
                     <div class="mb-4">
                         <label for="Notes" class="form-label">Notes (optional)</label>
                         <textarea class="form-control" id="Notes" name="Notes" rows="3"
                                   placeholder="Add notes..."></textarea>
                     </div>
 
-                    <!-- Submit Button -->
+                    <!-- Submit -->
                     <button type="submit" class="btn btn-primary w-100 add-transaction-btn">Add Transaction</button>
-
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    #addTransactionModal .modal-dialog {
+        margin: 0.75rem auto;
+        max-width: 500px;
+        width: calc(100% - 1.5rem);
+        height: calc(100dvh - 1.5rem);
+    }
+
+    #addTransactionModal .modal-content {
+        height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #addTransactionModal .modal-body {
+        flex: 1 1 auto;
+        overflow-y: auto;
+        padding: 0.75rem 1.25rem;
+    }
+
+    #addTransactionModal .modal-footer {
+        padding: 0.75rem 1.25rem 1.25rem;
+    }
+
+    #addTransactionModal .add-transaction-btn {
+        border-radius: 12px;
+        padding: 0.75rem;
+        font-weight: 600;
+    }
+
+    @@media (max-width: 400px) {
+        #addTransactionModal .modal-body {
+            padding: 0.5rem 1rem;
+        }
+
+        #addTransactionModal .form-label {
+            font-size: 0.875rem;
+        }
+
+        #addTransactionModal .form-control,
+        #addTransactionModal .form-select {
+            font-size: 0.875rem;
+        }
+    }
+</style>

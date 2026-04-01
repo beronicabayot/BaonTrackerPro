@@ -17,6 +17,8 @@ namespace BaonTrackerPro.Models
 
         public DateTime? Deadline { get; set; }
 
-        public string? Notes { get; set; }  // 👈 added this
+        public string? Notes { get; set; }  
+
+        public bool IsDone { get; set; } = false;
     }
 }

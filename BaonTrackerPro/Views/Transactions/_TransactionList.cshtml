@@ -62,7 +62,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" asp-action="Details" asp-route-id="@transaction.Id">
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="showDetails(@transaction.Id)">
                                         <i class="iconoir-info-circle"></i> Details
                                     </a>
                                 </li>
@@ -82,4 +82,120 @@
             }
         </div>
     </div>
+    <!-- Details Modal -->
+    <div id="detailsModal" style="
+        display:none;
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.4);
+        z-index:9999;
+        align-items:center;
+        justify-content:center;">
+        <div style="
+            background:white;
+            border-radius:24px;
+            box-shadow:0 8px 32px rgba(0,0,0,0.12);
+            padding:2rem;
+            max-width:480px;
+            width:90%;
+            position:relative;">
+
+            <!-- Close button -->
+            <button onclick="closeDetails()" style="
+                position:absolute;
+                top:1rem; right:1rem;
+                background:none;
+                border:none;
+                font-size:1.2rem;
+                cursor:pointer;
+                color:#6c757d;
+                line-height:1;">
+                <i class="iconoir-xmark"></i>
+            </button>
+
+            <!-- Title -->
+            <h2 id="modal-description" style="font-size:1.5rem; font-weight:700; margin-bottom:0.25rem; color:#1e1e1e;">
+            </h2>
+            <p id="modal-category" style="font-size:1rem; color:#6c757d; margin-bottom:1rem;"></p>
+            <div id="modal-badge" style="margin-bottom:1.5rem;"></div>
+
+            <!-- Fields -->
+            <div style="border-top:1px solid #e9ecef; padding-top:1rem;">
+                <div
+                    style="display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid #f0f0f0;">
+                    <span style="font-weight:500; color:#6c757d;">Amount ₱:</span>
+                    <span id="modal-amount" style="font-weight:600;"></span>
+                </div>
+                <div
+                    style="display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid #f0f0f0;">
+                    <span style="font-weight:500; color:#6c757d;">Date:</span>
+                    <span id="modal-date" style="font-weight:600; color:#1e1e1e;"></span>
+                </div>
+                <div
+                    style="display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid #f0f0f0;">
+                    <span style="font-weight:500; color:#6c757d;">Time:</span>
+                    <span id="modal-time" style="font-weight:600; color:#1e1e1e;"></span>
+                </div>
+                <div id="modal-notes-row" style="display:none; justify-content:space-between; padding:0.75rem 0;">
+                    <span style="font-weight:500; color:#6c757d;">Notes:</span>
+                    <span id="modal-notes" style="font-weight:600; color:#1e1e1e;"></span>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="margin-top:1.5rem; text-align:right;">
+                <button onclick="closeDetails()" style="
+                    background:#e9ecef;
+                    border:none;
+                    color:#495057;
+                    padding:0.5rem 1.5rem;
+                    border-radius:2rem;
+                    font-weight:500;
+                    cursor:pointer;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showDetails(id) {
+            fetch('/Transactions/DetailsJson/' + id)
+                .then(r => r.json())
+                .then(d => {
+                    document.getElementById('modal-description').textContent = d.description;
+                    document.getElementById('modal-category').textContent = d.category;
+                    document.getElementById('modal-date').textContent = d.date;
+                    document.getElementById('modal-time').textContent = d.time;
+
+                    const amount = document.getElementById('modal-amount');
+                    amount.textContent = (d.isExpense ? '- ' : '+ ') + d.absAmount;
+                    amount.style.color = d.isExpense ? '#dc3545' : '#27AA83';
+
+                    document.getElementById('modal-badge').innerHTML = d.isExpense
+                        ? '<span style="background:#dc3545;color:white;padding:0.25rem 1rem;border-radius:20px;font-size:0.8rem;font-weight:600;">Expense</span>'
+                        : '<span style="background:#27AA83;color:white;padding:0.25rem 1rem;border-radius:20px;font-size:0.8rem;font-weight:600;">Income</span>';
+
+                    const notesRow = document.getElementById('modal-notes-row');
+                    if (d.notes) {
+                        document.getElementById('modal-notes').textContent = d.notes;
+                        notesRow.style.display = 'flex';
+                    } else {
+                        notesRow.style.display = 'none';
+                    }
+
+                    const modal = document.getElementById('detailsModal');
+                    modal.style.display = 'flex';
+                });
+        }
+
+        function closeDetails() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+
+        // Close when clicking backdrop
+        document.getElementById('detailsModal').addEventListener('click', function (e) {
+            if (e.target === this) closeDetails();
+        });
+    </script>
 }
