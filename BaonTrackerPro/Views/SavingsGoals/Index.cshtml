@@ -10,9 +10,14 @@
             <h1>Savings Goals</h1>
             <p>Track your progress toward your goals</p>
         </div>
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addGoalModal">
-            + New Goal
-        </button>
+        <div class="d-flex align-items-center gap-2">
+            <a href="/SavingsGoals/Completed" class="btn btn-outline-success" style="border-radius: 50px;">
+                🎉 Goals Reached
+            </a>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+                + New Goal
+            </button>
+        </div>
     </div>
 
     @if (!Model.Any())
@@ -79,8 +84,7 @@
 
                     <!-- Progress bar -->
                     <div class="budget-progress-bar">
-                        <div class="budget-progress-fill"
-                             style="width: @((int)percentage)%; background-color: @progressColor;">
+                        <div class="budget-progress-fill" style="width: @((int)percentage)%; background-color: @progressColor;">
                         </div>
                     </div>
 
@@ -118,13 +122,13 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Target Amount (₱)</label>
-                        <input type="number" step="0.01" class="form-control"
-                               name="TargetAmount" placeholder="0.00" required />
+                        <input type="number" step="0.01" class="form-control" name="TargetAmount" placeholder="0.00"
+                               required />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Current Amount (₱)</label>
-                        <input type="number" step="0.01" class="form-control"
-                               name="CurrentAmount" placeholder="0.00" value="0" required />
+                        <input type="number" step="0.01" class="form-control" name="CurrentAmount" placeholder="0.00"
+                               value="0" required />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Deadline</label>
@@ -132,8 +136,7 @@
                     </div>
                     <div class="mb-4">
                         <label class="form-label">Notes (optional)</label>
-                        <textarea class="form-control" name="Notes" rows="2"
-                                  placeholder="Add notes..."></textarea>
+                        <textarea class="form-control" name="Notes" rows="2" placeholder="Add notes..."></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary w-100 add-transaction-btn">
                         Create Goal
@@ -158,23 +161,20 @@
                     <input type="hidden" name="Id" id="editGoalId" />
                     <div class="mb-3">
                         <label class="form-label">Goal Name</label>
-                        <input type="text" class="form-control" name="Name"
-                               id="editGoalName" required />
+                        <input type="text" class="form-control" name="Name" id="editGoalName" required />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Target Amount (₱)</label>
-                        <input type="number" step="0.01" class="form-control"
-                               name="TargetAmount" id="editGoalTarget" required />
+                        <input type="number" step="0.01" class="form-control" name="TargetAmount" id="editGoalTarget"
+                               required />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Deadline</label>
-                        <input type="date" class="form-control" name="Deadline"
-                               id="editGoalDeadline" required />
+                        <input type="date" class="form-control" name="Deadline" id="editGoalDeadline" required />
                     </div>
                     <div class="mb-4">
                         <label class="form-label">Notes (optional)</label>
-                        <textarea class="form-control" name="Notes" id="editGoalNotes"
-                                  rows="2"></textarea>
+                        <textarea class="form-control" name="Notes" id="editGoalNotes" rows="2"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary w-100 add-transaction-btn">
                         Save Changes
@@ -203,8 +203,8 @@
                     <input type="hidden" name="id" id="addFundsGoalId" />
                     <div class="mb-4">
                         <label class="form-label">Amount to Add (₱)</label>
-                        <input type="number" step="0.01" class="form-control"
-                               name="amount" placeholder="0.00" required />
+                        <input type="number" step="0.01" class="form-control" name="amount" placeholder="0.00"
+                               required />
                     </div>
                     <button type="submit" class="btn btn-primary w-100 add-transaction-btn">
                         Add Funds

@@ -1,0 +1,109 @@
+@model IEnumerable<BaonTrackerPro.Models.SavingsGoal>
+
+@{
+    ViewData["Title"] = "Completed Goals";
+}
+
+<div class="budget-page">
+    <div class="header-row">
+        <div class="title-section">
+            <h1>🎉 Goal Reached</h1>
+            <p>All your completed savings goals</p>
+        </div>
+        <a href="/SavingsGoals" class="btn btn-outline-secondary" style="border-radius: 50px;">
+            ← Back to Goals
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <i class="iconoir-piggy-bank" style="font-size: 3rem; color: #adb5bd;"></i>
+            <p>No completed goals yet.</p>
+            <strong>Keep saving to reach your goals!</strong>
+        </div>
+    }
+    else
+    {
+        <div class="budget-grid">
+            @foreach (var goal in Model)
+            {
+                var deadlineStr = goal.Deadline?.ToString("yyyy-MM-dd") ?? "";
+                var notesStr = goal.Notes ?? "";
+
+                <div class="budget-card">
+                    <div class="budget-card-header">
+                        <div class="budget-icon-title">
+                            <span class="budget-emoji">🎯</span>
+                            <div>
+                                <div class="budget-title">@goal.Name</div>
+                                <span class="budget-period-badge">
+                                    Due @goal.Deadline?.ToString("MMM dd, yyyy")
+                                </span>
+                            </div>
+                        </div>
+                        <div class="budget-actions">
+                            <button class="budget-action-btn delete-btn"
+                                    onclick="showGoalDeleteModal(@goal.Id)">
+                                <i class="iconoir-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(goal.Notes))
+                    {
+                        <p class="text-muted small mt-1 mb-2">@goal.Notes</p>
+                    }
+
+                    <!-- Progress label row -->
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="text-muted small">Progress</span>
+                        <span class="text-muted small fw-bold">100%</span>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="budget-progress-bar">
+                        <div class="budget-progress-fill"
+                             style="width: 100%; background-color: #27AA83;">
+                        </div>
+                    </div>
+
+                    <!-- Amounts -->
+                    <div class="budget-amounts">
+                        <span class="budget-spent">₱@goal.CurrentAmount.ToString("F2") saved</span>
+                        <span class="budget-limit">of ₱@goal.TargetAmount.ToString("F2")</span>
+                    </div>
+
+                    <div class="text-success small fw-bold mt-1">🎉 Goal Reached!</div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- Delete Goal Confirmation Modal -->
+<div class="modal fade" id="deleteGoalModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to <span class="text-danger fw-bold">delete</span> this savings goal?</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">No</button>
+                <form id="deleteGoalForm" asp-action="Delete" asp-controller="SavingsGoals" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="deleteGoalId" name="id" />
+                    <button type="submit" class="btn btn-danger">Delete Permanently</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/savings.js"></script>
+}

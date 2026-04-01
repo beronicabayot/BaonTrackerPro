@@ -1,0 +1,271 @@
+@model IEnumerable<BaonTrackerPro.Models.Transaction>
+
+@{
+    ViewData["Title"] = "History";
+    var selectedMonth = ViewBag.SelectedMonth as string ?? DateTime.Now.ToString("yyyy-MM");
+    var current = DateTime.ParseExact(selectedMonth, "yyyy-MM", null);
+    var prev = current.AddMonths(-1).ToString("yyyy-MM");
+    var next = current.AddMonths(1).ToString("yyyy-MM");
+    var type = ViewBag.SelectedType as string ?? "";
+    var sort = ViewBag.SelectedSort as string ?? "";
+    decimal totalSpent = ViewBag.TotalSpent;
+    decimal totalReceived = ViewBag.TotalReceived;
+    decimal net = ViewBag.Net;
+    var isSortingByAmount = sort == "amount_asc" || sort == "amount_desc";
+}
+
+<div class="transactions-page">
+
+    <!-- Header -->
+    <div class="header-row">
+        <div class="title-section">
+            <h1>History</h1>
+            <p>Track your transactions here!</p>
+        </div>
+    </div>
+
+    <!-- Summary + Month Nav Row -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h6 class="fw-bold mb-0">
+            <i class="iconoir-wallet me-1"></i>
+            Summary for @current.ToString("MMMM") 1-@DateTime.DaysInMonth(current.Year, current.Month)
+            @current.ToString("yyyy")
+        </h6>
+        <div class="d-flex align-items-center gap-2">
+
+            <!-- Month Range Picker -->
+            <div class="month-nav">
+                <a href="?month=@prev&amp;type=@type&amp;sort=@sort" class="month-nav-btn">
+                    <i class="iconoir-nav-arrow-left"></i>
+                </a>
+                <span class="month-nav-label" onclick="document.getElementById('historyMonthJumper').showPicker()"
+                      style="cursor:pointer;" title="Click to jump to a month">
+                    @current.ToString("MMM") 1-@DateTime.DaysInMonth(current.Year, current.Month)
+                    @current.ToString("yyyy")
+                </span>
+                <input type="month" id="historyMonthJumper" value="@selectedMonth"
+                       style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;"
+                       onchange="window.location.href='?month=' + this.value + '&type=@type&sort=@sort'" />
+                <a href="?month=@next&amp;type=@type&amp;sort=@sort" class="month-nav-btn">
+                    <i class="iconoir-nav-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Filter Dropdown -->
+            <div class="custom-dropdown">
+                <button class="budget-filter-btn" type="button" onclick="toggleDropdown('filterMenu', event)">
+                    <i class="iconoir-filter"></i>
+                    <span>@(string.IsNullOrEmpty(type) ? "All Types" : type)</span>
+                    <i class="iconoir-nav-arrow-down"></i>
+                </button>
+                <div class="custom-dropdown-menu" id="filterMenu">
+                    <a class="@(type == "" ? "selected" : "")" href="?month=@selectedMonth&amp;sort=@sort">All</a>
+                    <a class="@(type == "Income" ? "selected" : "")"
+                       href="?month=@selectedMonth&amp;type=Income&amp;sort=@sort">Income</a>
+                    <a class="@(type == "Expense" ? "selected" : "")"
+                       href="?month=@selectedMonth&amp;type=Expense&amp;sort=@sort">Expense</a>
+                </div>
+            </div>
+
+            <!-- Sort Dropdown -->
+            <div class="custom-dropdown">
+                <button class="budget-filter-btn" type="button" onclick="toggleDropdown('sortMenu', event)">
+                    <i class="iconoir-sort"></i>
+                    <span>
+                        @(sort == "amount_desc" ? "Highest to Lowest" :
+                          sort == "amount_asc" ? "Lowest to Highest" : "Sort")
+                    </span>
+                    <i class="iconoir-nav-arrow-down"></i>
+                </button>
+                <div class="custom-dropdown-menu" id="sortMenu">
+                    <a class="@(sort == "amount_desc" ? "selected" : "")"
+                       href="?month=@selectedMonth&amp;type=@type&amp;sort=amount_desc">Highest to Lowest</a>
+                    <a class="@(sort == "amount_asc" ? "selected" : "")"
+                       href="?month=@selectedMonth&amp;type=@type&amp;sort=amount_asc">Lowest to Highest</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="summary-card">
+                <div class="summary-label">TOTAL SPENT</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="summary-amount text-danger">
+                        -₱@Math.Abs(totalSpent).ToString("N2")
+                    </div>
+                    <div style="display:flex; align-items:center; gap:2px; color:#dc3545; opacity:0.7;">
+                        <i class="iconoir-coins" style="font-size:1.3rem;"></i>
+                        <i class="iconoir-arrow-right" style="font-size:1rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-card">
+                <div class="summary-label">TOTAL RECEIVED</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="summary-amount text-success">
+                        +₱@totalReceived.ToString("N2")
+                    </div>
+                    <div style="display:flex; align-items:center; gap:2px; color:#27AA83; opacity:0.7;">
+                        <i class="iconoir-coins" style="font-size:1.3rem;"></i>
+                        <i class="iconoir-arrow-left" style="font-size:1rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-card">
+                <div class="summary-label">NET</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="summary-amount @(net >= 0 ? "text-success" : "text-danger")">
+                        @(net >= 0 ? "+" : "")₱@net.ToString("N2")
+                    </div>
+                    <div style="color: @(net >= 0 ? "#27AA83" : "#dc3545"); opacity:0.7;">
+                        <i class="@(net >= 0 ? "iconoir-graph-up" : "iconoir-graph-down")"
+                           style="font-size:1.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction List -->
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <i class="iconoir-wallet" style="font-size: 3rem; color: #adb5bd;"></i>
+            <p>No transactions for @current.ToString("MMMM yyyy").</p>
+        </div>
+    }
+    else if (isSortingByAmount)
+    {
+        <!-- Flat list when sorting by amount — no date grouping -->
+        <div class="budget-card p-0">
+            @foreach (var t in Model)
+            {
+                var isIncome = t.Amount >= 0;
+                var amountColor = isIncome ? "#27AA83" : "#dc3545";
+                var amountSign = isIncome ? "+" : "-";
+                var emoji = t.Category switch
+                {
+                    "Food & Drinks" => "🍔",
+                    "Transportation" => "🚕",
+                    "Personal/Lifestyle" => "👗",
+                    "Bills & Utilities" => "📄",
+                    "Entertainment" => "🎮",
+                    "Education" => "📚",
+                    "Health" => "💊",
+                    "Salary" => "💼",
+                    "Freelance" => "💻",
+                    "Allowance" => "🎒",
+                    "Bonus" => "🎉",
+                    "Gift" => "🎁",
+                    _ => "📦"
+                };
+                <div class="d-flex justify-content-between align-items-center px-3 py-3"
+                     style="border-bottom: 1px solid var(--border-color, #f0f0f0); min-height: 64px;">
+                    <div class="d-flex align-items-center gap-3">
+                        <span style="font-size:1.25rem;
+                            background-color: @(isIncome ? "#e6f9f3" : "#fde8e8");
+                            border-radius: 10px;
+                            width: 42px; height: 42px;
+                            display:inline-flex;
+                            align-items:center;
+                            justify-content:center;">
+                            @emoji
+                        </span>
+                        <div>
+                            <div class="fw-semibold">@t.Description</div>
+                            <div class="text-muted small">@t.Category · @t.Date.ToString("MMM dd")</div>
+                        </div>
+                    </div>
+                    <div class="fw-bold d-flex align-items-center gap-1" style="color: @amountColor;">
+                        <i class="@(isIncome ? "iconoir-arrow-up-right" : "iconoir-arrow-down-right")"
+                           style="font-size:0.9rem;"></i>
+                        @amountSign ₱@Math.Abs(t.Amount).ToString("N2")
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <!-- Grouped by date when no amount sort -->
+        var grouped = Model.GroupBy(t => t.Date.Date).OrderByDescending(g => g.Key);
+        foreach (var group in grouped)
+        {
+            <div class="mb-3">
+                <div class="text-muted small fw-bold mb-2" style="text-transform:uppercase; letter-spacing:0.05em;">
+                    @group.Key.ToString("MMMM dd, yyyy")
+                </div>
+                <div class="budget-card p-0">
+                    @foreach (var t in group)
+                    {
+                        var isIncome = t.Amount >= 0;
+                        var amountColor = isIncome ? "#27AA83" : "#dc3545";
+                        var amountSign = isIncome ? "+" : "-";
+                        var emoji = t.Category switch
+                        {
+                            "Food & Drinks" => "🍔",
+                            "Transportation" => "🚕",
+                            "Personal/Lifestyle" => "👗",
+                            "Bills & Utilities" => "📄",
+                            "Entertainment" => "🎮",
+                            "Education" => "📚",
+                            "Health" => "💊",
+                            "Salary" => "💼",
+                            "Freelance" => "💻",
+                            "Allowance" => "🎒",
+                            "Bonus" => "🎉",
+                            "Gift" => "🎁",
+                            _ => "📦"
+                        };
+                        <div class="d-flex justify-content-between align-items-center px-3 py-3"
+                             style="border-bottom: 1px solid var(--border-color, #f0f0f0); min-height: 64px;">
+                            <div class="d-flex align-items-center gap-3">
+                                <span style="font-size:1.25rem;
+                                    background-color: @(isIncome ? "#e6f9f3" : "#fde8e8");
+                                    border-radius: 10px;
+                                    width: 42px; height: 42px;
+                                    display:inline-flex;
+                                    align-items:center;
+                                    justify-content:center;">
+                                    @emoji
+                                </span>
+                                <div>
+                                    <div class="fw-semibold">@t.Description</div>
+                                    <div class="text-muted small">@t.Category · @t.Date.ToString("MMM dd")</div>
+                                </div>
+                            </div>
+                            <div class="fw-bold d-flex align-items-center gap-1" style="color: @amountColor;">
+                                <i class="@(isIncome ? "iconoir-arrow-up-right" : "iconoir-arrow-down-right")"
+                                   style="font-size:0.9rem;"></i>
+                                @amountSign ₱@Math.Abs(t.Amount).ToString("N2")
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+
+</div>
+
+<script>
+    function toggleDropdown(id, event) {
+        event.stopPropagation();
+        const menu = document.getElementById(id);
+        const allMenus = document.querySelectorAll('.custom-dropdown-menu');
+        allMenus.forEach(m => { if (m.id !== id) m.classList.remove('open'); });
+        menu.classList.toggle('open');
+    }
+
+    document.addEventListener('click', function () {
+        document.querySelectorAll('.custom-dropdown-menu').forEach(m => m.classList.remove('open'));
+    });
+</script>

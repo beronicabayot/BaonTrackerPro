@@ -19,7 +19,6 @@ namespace BaonTrackerPro.Controllers
         {
             IQueryable<Transaction> transactions = _context.Transactions.OrderByDescending(t => t.Date);
 
-            // Apply search filter
             if (!string.IsNullOrEmpty(searchString))
             {
                 transactions = transactions.Where(t =>
@@ -27,23 +26,17 @@ namespace BaonTrackerPro.Controllers
                     (t.Category != null && t.Category.Contains(searchString)));
             }
 
-            // Apply type filter (Income / Expense)
             if (!string.IsNullOrEmpty(type))
             {
                 if (type == "Income")
-                {
                     transactions = transactions.Where(t => t.Amount >= 0);
-                }
                 else if (type == "Expense")
-                {
                     transactions = transactions.Where(t => t.Amount < 0);
-                }
             }
 
             var result = await transactions.ToListAsync();
-
             ViewData["CurrentFilter"] = searchString;
-            ViewData["CurrentType"] = type;   // keep current type for the dropdown
+            ViewData["CurrentType"] = type;
             return View(result);
         }
 
@@ -73,8 +66,6 @@ namespace BaonTrackerPro.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            // If validation fails, add an error message and redirect back to Index
             TempData["ErrorMessage"] = "Please fill in all required fields correctly.";
             return RedirectToAction(nameof(Index));
         }
@@ -139,7 +130,7 @@ namespace BaonTrackerPro.Controllers
             return _context.Transactions.Any(e => e.Id == id);
         }
 
-        // POST: Transactions/Save (Create or Update)
+        // POST: Transactions/Save
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Save([Bind("Id,Amount,Category,Date,Description,Notes")] Transaction transaction)
@@ -147,20 +138,13 @@ namespace BaonTrackerPro.Controllers
             if (ModelState.IsValid)
             {
                 if (transaction.Id == 0)
-                {
-                    // New transaction
                     _context.Add(transaction);
-                }
                 else
-                {
-                    // Update existing
                     _context.Update(transaction);
-                }
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            // If validation fails, show error
             TempData["ErrorMessage"] = "Please fill in all required fields correctly.";
             return RedirectToAction(nameof(Index));
         }
@@ -185,5 +169,42 @@ namespace BaonTrackerPro.Controllers
             });
         }
 
-    }
+        // GET: Transactions/History
+        public async Task<IActionResult> History(string? type, string? sort, string? month)
+        {
+            var selectedMonth = string.IsNullOrEmpty(month)
+                ? DateTime.Now.ToString("yyyy-MM")
+                : month;
+
+            var parsedMonth = DateTime.ParseExact(selectedMonth, "yyyy-MM", null);
+
+            IQueryable<Transaction> transactions = _context.Transactions
+                .Where(t => t.Date.Year == parsedMonth.Year && t.Date.Month == parsedMonth.Month);
+
+            if (type == "Income")
+                transactions = transactions.Where(t => t.Amount >= 0);
+            else if (type == "Expense")
+                transactions = transactions.Where(t => t.Amount < 0);
+
+            transactions = sort switch
+            {
+                "amount_asc"  => transactions.OrderBy(t => t.Amount),
+                "amount_desc" => transactions.OrderByDescending(t => t.Amount),
+                "date_asc"    => transactions.OrderBy(t => t.Date),
+                _             => transactions.OrderByDescending(t => t.Date)
+            };
+
+            var result = await transactions.ToListAsync();
+
+            ViewBag.SelectedMonth    = selectedMonth;
+            ViewBag.SelectedType     = type ?? "";
+            ViewBag.SelectedSort     = sort ?? "date_desc";
+            ViewBag.TotalSpent       = result.Where(t => t.Amount < 0).Sum(t => t.Amount);
+            ViewBag.TotalReceived    = result.Where(t => t.Amount >= 0).Sum(t => t.Amount);
+            ViewBag.Net              = result.Sum(t => t.Amount);
+
+            return View(result);
+        }
+
+    } // 👈 only ONE closing brace for the class
 }

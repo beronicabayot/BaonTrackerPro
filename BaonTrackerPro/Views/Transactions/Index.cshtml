@@ -30,25 +30,45 @@
     <!-- Search & Filter -->
     <div class="search-filter-row">
         <form asp-action="Index" method="get" class="search-form">
-            <div class="input-group">
-                <span class="input-group-text bg-transparent border-end-0">
-                    <i class="iconoir-search"></i>
-                </span>
-                <input type="text" name="searchString" value="@searchString" class="form-control border-start-0 ps-0"
-                       placeholder="Search Transactions" />
+            <div class="d-flex align-items-center gap-2">
+                <div class="input-group" style="height: 36px;">
+                    <span class="input-group-text bg-transparent border-end-0 border-secondary-subtle"
+                          style="height: 36px;">
+                        <i class="iconoir-search text-secondary"></i>
+                    </span>
+                    <input type="text" name="searchString" value="@searchString"
+                           class="form-control border-start-0 ps-0 border-secondary-subtle text-secondary"
+                           placeholder="Search Transactions"
+                           style="height: 36px; color: var(--bs-secondary-color) !important;" />
+                </div>
             </div>
         </form>
         <div class="filter-dropdown">
-            <form asp-action="Index" method="get" id="typeFilterForm">
-                <select name="type" class="form-select" aria-label="Filter by type" onchange="this.form.submit()">
-                    <option value="" selected="@(string.IsNullOrEmpty(ViewData["CurrentType"] as string))">All Types 
-                    </option>
-                    <option value="Income" selected="@(ViewData["CurrentType"]?.ToString() == "Income")">Income</option>
-                    <option value="Expense" selected="@(ViewData["CurrentType"]?.ToString() == "Expense")">Expense
-                    </option>
-                </select>
-                <input type="hidden" name="searchString" value="@ViewData["CurrentFilter"]" />
-            </form>
+            @{
+                var currentType = ViewData["CurrentType"] as string ?? "";
+                var currentSearch = ViewData["CurrentFilter"] as string ?? "";
+            }
+            <div class="dropdown">
+                <button class="budget-filter-btn" type="button" data-bs-toggle="dropdown">
+                    <i class="iconoir-filter"></i>
+                    <span>@(string.IsNullOrEmpty(currentType) ? "All Types" : currentType)</span>
+                    <i class="iconoir-nav-arrow-down"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item @(currentType == "" ? "selected" : "")"
+                           href="?searchString=@currentSearch">All Types</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item @(currentType == "Income" ? "selected" : "")"
+                           href="?searchString=@currentSearch&type=Income">Income</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item @(currentType == "Expense" ? "selected" : "")"
+                           href="?searchString=@currentSearch&type=Expense">Expense</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 

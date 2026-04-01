@@ -3,10 +3,8 @@ using BaonTrackerPro.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace BaonTrackerPro.Controllers
 {
-    // Must be exactly this name
     public class SavingsGoalsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +17,11 @@ namespace BaonTrackerPro.Controllers
         public async Task<IActionResult> Index()
         {
             var goals = await _context.SavingsGoals.ToListAsync();
-            return View(goals);
+            var activeGoals = goals
+                .Where(g => g.TargetAmount == 0 ||
+                       Math.Round((double)g.CurrentAmount / (double)g.TargetAmount * 100, 2) < 100)
+                .ToList();
+            return View(activeGoals);
         }
 
         [HttpPost]
@@ -68,6 +70,16 @@ namespace BaonTrackerPro.Controllers
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Completed()
+        {
+            var allGoals = await _context.SavingsGoals.ToListAsync();
+            var completedGoals = allGoals
+                .Where(g => g.TargetAmount > 0 &&
+                       Math.Round((double)g.CurrentAmount / (double)g.TargetAmount * 100, 2) >= 100)
+                .ToList();
+            return View(completedGoals);
         }
     }
 }
