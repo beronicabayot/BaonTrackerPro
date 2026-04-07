@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BaonTrackerPro")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d81dd376ae8b2992896ec0c8a8f6425fb9cc414d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1d45dbd557984d0400f7265a2dbac26c88858466")]
 [assembly: System.Reflection.AssemblyProductAttribute("BaonTrackerPro")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BaonTrackerPro")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

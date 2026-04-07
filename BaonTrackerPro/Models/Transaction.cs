@@ -18,7 +18,10 @@ namespace BaonTrackerPro.Models
 
         public string? Description { get; set; }
 
-        // New property for optional notes
         public string? Notes { get; set; }
+
+        // Added for dashboard
+        public string CategoryIcon { get; set; } = "💰";
+        public bool IsIncome { get; set; } = false;
     }
 }

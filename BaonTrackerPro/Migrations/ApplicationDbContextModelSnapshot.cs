@@ -99,11 +99,18 @@ namespace BaonTrackerPro.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CategoryIcon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsIncome")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
