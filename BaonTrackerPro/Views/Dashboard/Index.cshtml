@@ -84,7 +84,6 @@
     .goal-amounts { color: var(--text-secondary); }
     .goal-bar { height: 6px; background: var(--bg); border-radius: 99px; overflow: hidden; }
     .goal-fill { height: 100%; background: var(--accent); border-radius: 99px; }
-    .btn-add-goal { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; font-size: 13px; font-weight: 500; color: var(--accent); background: none; border: none; cursor: pointer; font-family: "Inter", sans-serif; }
 
     .txn-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; }
     .txn-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
@@ -99,24 +98,6 @@
     .txn-amount { font-family: "Inter", sans-serif; font-size: 14px; font-weight: 500; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
     .txn-amount.income  { color: var(--income-color); }
     .txn-amount.expense { color: var(--expense-color); }
-
-    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 100; align-items: center; justify-content: center; }
-    .modal-backdrop.open { display: flex; }
-    .modal { background: var(--surface); border-radius: var(--radius-lg); padding: 28px; width: 100%; max-width: 420px; margin: 16px; }
-    .modal-title { font-size: 17px; font-weight: 600; margin-bottom: 20px; }
-    .form-group { margin-bottom: 14px; }
-    .form-label { display: block; font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 5px; }
-    .form-control { width: 100%; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: "Inter", sans-serif; font-size: 14px; color: var(--text-primary); background: var(--surface); outline: none; transition: border-color .15s; }
-    .form-control:focus { border-color: var(--accent); }
-    .type-toggle { display: flex; gap: 8px; margin-bottom: 14px; }
-    .type-btn { flex: 1; padding: 8px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-family: "Inter", sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-secondary); transition: all .15s; }
-    .type-btn.active-income  { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
-    .type-btn.active-expense { background: var(--danger-light); border-color: var(--danger); color: var(--danger); }
-    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-    .btn-cancel { flex: 1; padding: 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-family: "Inter", sans-serif; font-size: 14px; cursor: pointer; color: var(--text-secondary); }
-    .btn-save { flex: 2; padding: 10px; border: none; border-radius: var(--radius-sm); background: var(--accent); color: #fff; font-family: "Inter", sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; }
-    .btn-save:hover { background: var(--accent-dark); }
-    .btn-save:disabled { opacity: .6; cursor: not-allowed; }
 
     @@keyframes slideIn {
         from { opacity: 0; transform: translateY(-8px); }
@@ -133,12 +114,6 @@
             <div class="date-text">@today</div>
             <h1>Good Day, @Model.UserName!</h1>
         </div>
-        <button class="btn-add" onclick="document.getElementById('addModal').classList.add('open')">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M7 1v12M1 7h12" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Add Transaction
-        </button>
     </div>
 
     <div class="stats-grid">
@@ -252,7 +227,6 @@
                             </div>
                         </div>
                     }
-                    <button class="btn-add-goal">+ Add Goal</button>
                 }
                 else
                 {
@@ -266,7 +240,6 @@
                         </svg>
                         <p>No Savings Goals yet</p>
                     </div>
-                    <button class="btn-add-goal">+ Add Goal</button>
                 }
             </div>
         </div>
@@ -322,55 +295,6 @@
     </div>
 </div>
 
-<div class="modal-backdrop" id="addModal" onclick="if(event.target===this)this.classList.remove('open')">
-    <div class="modal">
-        <div class="modal-title">Add Transaction</div>
-        <div class="type-toggle">
-            <button type="button" class="type-btn active-expense" id="typeExpense" onclick="setType('expense')">Expense</button>
-            <button type="button" class="type-btn" id="typeIncome" onclick="setType('income')">Income</button>
-        </div>
-
-        <form id="txnForm">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="IsIncome" id="isIncomeField" value="false" />
-
-            <div class="form-group">
-                <label class="form-label">Description</label>
-                <input name="Description" class="form-control" placeholder="e.g. Mga damit" required />
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Amount (&#8369;)</label>
-                <input name="Amount" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" required />
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Category</label>
-                <select name="Category" class="form-control">
-                    <option value="Personal/Lifestyle">🛍 Personal/Lifestyle</option>
-                    <option value="Transportation">🚌 Transportation</option>
-                    <option value="Food">🍔 Food</option>
-                    <option value="Allowance">💵 Allowance</option>
-                    <option value="Bills">🧾 Bills</option>
-                    <option value="Health">💊 Health</option>
-                    <option value="Entertainment">🎮 Entertainment</option>
-                    <option value="Others">📦 Others</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Date</label>
-                <input name="Date" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-            </div>
-
-            <div class="modal-actions">
-                <button type="button" class="btn-cancel" onclick="document.getElementById('addModal').classList.remove('open')">Cancel</button>
-                <button type="button" class="btn-save" id="btnSave" onclick="submitTransaction()">Save Transaction</button>
-            </div>
-        </form>
-    </div>
-</div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
     let donutChartInstance = null;
@@ -391,7 +315,6 @@
     function fadeUpdate(id, value) {
         const el = document.getElementById(id);
         if (!el) return;
-
         el.style.opacity = '0';
         setTimeout(() => {
             el.textContent = value;
@@ -400,10 +323,10 @@
     }
 
     function updateStats(data) {
-        fadeUpdate('statBalance', '₱' + formatNumber(data.balance));
-        fadeUpdate('statIncome', '₱' + formatNumber(data.income));
+        fadeUpdate('statBalance',  '₱' + formatNumber(data.balance));
+        fadeUpdate('statIncome',   '₱' + formatNumber(data.income));
         fadeUpdate('statExpenses', '₱' + formatNumber(data.expenses));
-        fadeUpdate('statSavings', '₱' + formatNumber(data.savingsGoals));
+        fadeUpdate('statSavings',  '₱' + formatNumber(data.savingsGoals));
     }
 
     function renderTransactions(transactions) {
@@ -414,19 +337,17 @@
             list.innerHTML = `
                 <div class="savings-empty" id="emptyState">
                     <p>No transactions yet</p>
-                </div>
-            `;
+                </div>`;
             return;
         }
 
-        const arrowUp = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 8L6 3l4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        const arrowUp   = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 8L6 3l4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
         const arrowDown = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 5 4-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
         list.innerHTML = transactions.map(txn => {
             const amountClass = txn.isIncome ? 'income' : 'expense';
-            const sign = txn.isIncome ? '+ ₱' : '- ₱';
+            const sign  = txn.isIncome ? '+ ₱' : '- ₱';
             const arrow = txn.isIncome ? arrowUp : arrowDown;
-
             return `
                 <div class="txn-item">
                     <div class="txn-avatar">${txn.categoryIcon}</div>
@@ -438,8 +359,7 @@
                         ${arrow}
                         <span>${sign}${formatNumber(txn.amount)}</span>
                     </div>
-                </div>
-            `;
+                </div>`;
         }).join('');
     }
 
@@ -458,9 +378,7 @@
                         <path d="M24 34h8M28 30v8" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
                     <p>No Savings Goals yet</p>
-                </div>
-                <button class="btn-add-goal">+ Add Goal</button>
-            `;
+                </div>`;
             return;
         }
 
@@ -468,7 +386,6 @@
             const pct = goal.targetAmount > 0
                 ? (goal.currentAmount / goal.targetAmount) * 100
                 : 0;
-
             return `
                 <div class="goal-item">
                     <div class="goal-header">
@@ -478,9 +395,8 @@
                     <div class="goal-bar">
                         <div class="goal-fill" style="width: ${pct.toFixed(0)}%;"></div>
                     </div>
-                </div>
-            `;
-        }).join('') + `<button class="btn-add-goal">+ Add Goal</button>`;
+                </div>`;
+        }).join('');
     }
 
     function renderSpending(spendingByCategory) {
@@ -490,23 +406,22 @@
         if (!spendingByCategory || spendingByCategory.length === 0) {
             container.innerHTML = `
                 <div class="savings-empty">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                        <circle cx="24" cy="24" r="20" stroke="#9ca3af" stroke-width="2"/>
+                        <path d="M16 24h16M24 16v16" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
                     <p>No spending data yet</p>
-                </div>
-            `;
-
+                </div>`;
             if (donutChartInstance) {
                 donutChartInstance.destroy();
                 donutChartInstance = null;
             }
-
             return;
         }
 
         container.innerHTML = `
             <div class="spending-inner">
-                <div class="donut-wrap">
-                    <canvas id="donutChart"></canvas>
-                </div>
+                <div class="donut-wrap"><canvas id="donutChart"></canvas></div>
                 <div class="cat-legend">
                     ${spendingByCategory.map(cat => `
                         <div class="cat-item">
@@ -514,11 +429,9 @@
                             <span>${cat.icon}</span>
                             <span class="cat-name">${escapeHtml(cat.name)}</span>
                             <span class="cat-pct">${Number(cat.percentage).toFixed(0)}%</span>
-                        </div>
-                    `).join('')}
+                        </div>`).join('')}
                 </div>
-            </div>
-        `;
+            </div>`;
 
         const donutCanvas = document.getElementById('donutChart');
         if (!donutCanvas) return;
@@ -559,9 +472,7 @@
         try {
             const response = await fetch('/Dashboard/GetDashboardData', {
                 method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
             });
 
             if (!response.ok) {
@@ -579,20 +490,35 @@
         }
     }
 
-    function setType(type) {
-        const isIncome = type === 'income';
-        document.getElementById('isIncomeField').value = isIncome;
-        document.getElementById('typeIncome').className = 'type-btn' + (isIncome ? ' active-income' : '');
-        document.getElementById('typeExpense').className = 'type-btn' + (!isIncome ? ' active-expense' : '');
+    function combineDashboardDateTime() {
+        const datePicker = document.getElementById('DatePicker');
+        const timePicker = document.getElementById('TimePicker');
+        const hiddenDate = document.getElementById('Date');
+
+        if (!datePicker || !hiddenDate) return;
+
+        const dateValue = datePicker.value;
+        const timeValue = timePicker && timePicker.value ? timePicker.value : "00:00";
+
+        if (dateValue) {
+            hiddenDate.value = `${dateValue}T${timeValue}`;
+        }
     }
 
     async function submitTransaction() {
-        const btn = document.getElementById('btnSave');
-        btn.disabled = true;
-        btn.textContent = 'Saving…';
+        const btn = document.querySelector('#addTransactionForm .add-transaction-btn');
+        if (!btn) return;
 
-        const form = document.getElementById('txnForm');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        combineDashboardDateTime();
+
+        const form = document.getElementById('addTransactionForm');
         const formData = new FormData(form);
+
+        const transactionType = document.getElementById('TransactionType')?.value || 'expense';
+        formData.set('IsIncome', transactionType === 'income');
 
         try {
             const resp = await fetch('/Dashboard/AddTransaction', {
@@ -600,16 +526,28 @@
                 body: formData
             });
 
-            if (!resp.ok) {
-                throw new Error('Server error ' + resp.status);
-            }
+            if (!resp.ok) throw new Error('Server error ' + resp.status);
 
             const data = await resp.json();
 
             if (data.success) {
-                closeModal();
+                const modalEl = document.getElementById('addTransactionModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+
                 form.reset();
-                setType('expense');
+
+                document.getElementById('Date') && (document.getElementById('Date').value = '');
+                document.getElementById('DatePicker') && (document.getElementById('DatePicker').value = '');
+                document.getElementById('TimePicker') && (document.getElementById('TimePicker').value = '');
+
+                const transactionTypeInput = document.getElementById('TransactionType');
+                if (transactionTypeInput) transactionTypeInput.value = 'expense';
+
+                document.querySelectorAll('.segmented-option').forEach(x => x.classList.remove('active'));
+                const expenseOption = document.querySelector('.segmented-option[data-type="expense"]');
+                if (expenseOption) expenseOption.classList.add('active');
+
                 await refreshDashboard();
             } else {
                 alert('Something went wrong. Please try again.');
@@ -619,16 +557,38 @@
             alert('Could not save transaction. Check your connection and try again.');
         } finally {
             btn.disabled = false;
-            btn.textContent = 'Save Transaction';
+            btn.textContent = 'Add Transaction';
         }
-    }
-
-    function closeModal() {
-        document.getElementById('addModal').classList.remove('open');
     }
 
     document.addEventListener('DOMContentLoaded', function () {
         refreshDashboard();
-        setInterval(refreshDashboard, 5000);
+
+        const form = document.getElementById('addTransactionForm');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                submitTransaction();
+            });
+        }
+    });
+
+    document.addEventListener('shown.bs.modal', function (event) {
+        if (event.target && event.target.id === 'addTransactionModal') {
+            const now = new Date();
+
+            const datePicker = document.getElementById('DatePicker');
+            const timePicker = document.getElementById('TimePicker');
+
+            if (datePicker && !datePicker.value) {
+                datePicker.value = now.toISOString().split('T')[0];
+            }
+
+            if (timePicker && !timePicker.value) {
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                timePicker.value = `${hours}:${minutes}`;
+            }
+        }
     });
 </script>
