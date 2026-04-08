@@ -1,0 +1,8 @@
+## Local configuration (contains database credentials)
+BaonTrackerPro/appsettings.Development.json
+
+## .NET
+bin/
+obj/
+*.user
+*.suo
