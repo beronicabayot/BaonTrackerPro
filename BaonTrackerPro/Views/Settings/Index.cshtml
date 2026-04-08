@@ -1,0 +1,525 @@
+@model BaonTrackerPro.Models.Settings.SettingsViewModel
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<style>
+    .settings-page{
+        width: 100%;
+        margin: 0;
+        padding: 2rem;
+        background-color: #F6F9F8;
+        min-height: 100vh;
+        font-family: "Inter", sans-serif;
+    }
+
+    .settings-shell{
+        max-width: 920px;
+        margin: 0 auto;
+    }
+
+    .settings-title{
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1e1e1e;
+        margin-bottom: 1.5rem;
+        letter-spacing: -0.4px;
+    }
+
+    .settings-section{
+        text-align: center;
+        font-weight: 800;
+        color: #1e1e1e;
+        margin: 1.25rem 0 1rem;
+        letter-spacing: -0.2px;
+    }
+
+    .settings-card{
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid rgba(0,0,0,0.06);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.05);
+        padding: 1.5rem 1.5rem;
+    }
+
+    .profile-row{
+        display:flex;
+        align-items:center;
+        justify-content: center;
+        gap: 18px;
+        margin-bottom: 1.25rem;
+    }
+
+    .profile-img{
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: rgba(39,170,131,0.10);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        overflow:hidden;
+        border: 2px solid rgba(39,170,131,0.18);
+    }
+
+    .profile-img img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-actions{
+        display:flex;
+        flex-direction: column;
+        align-items:flex-start;
+        gap: 2px;
+    }
+
+    .profile-actions .select{
+        font-weight: 700;
+        color: #1e1e1e;
+        font-size: 0.95rem;
+    }
+    .hint{
+        font-size: 0.75rem;
+        color: rgba(0,0,0,0.45);
+        font-weight: 700;
+    }
+
+    .settings-list{
+        max-width: 560px;
+        margin: 0 auto;
+        display:flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .settings-item{
+        display:flex;
+        align-items:center;
+        justify-content: space-between;
+        padding: 10px 6px;
+    }
+
+    .settings-item .label{
+        color: rgba(0,0,0,0.55);
+        font-weight: 700;
+        font-size: 0.85rem;
+    }
+
+    .settings-item .value{
+        font-weight: 700;
+        color: #1e1e1e;
+        font-size: 0.9rem;
+        text-align:right;
+    }
+
+    .settings-item .right{
+        display:flex;
+        align-items:center;
+        gap: 14px;
+        min-width: 220px;
+        justify-content:flex-end;
+    }
+
+    .chev{
+        color: rgba(0,0,0,0.35);
+        font-size: 1.1rem;
+    }
+
+    @@media (max-width: 768px){
+        .settings-page{ padding: 1rem; }
+        .settings-item .right{ min-width: 160px; }
+    }
+
+    .banner{
+        max-width: 920px;
+        margin: 0 auto 12px;
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-weight: 800;
+        border: 1px solid rgba(0,0,0,0.06);
+    }
+    .banner.success{
+        background: rgba(39,170,131,0.10);
+        color: #197a60;
+        border-color: rgba(39,170,131,0.25);
+    }
+    .banner.error{
+        background: rgba(220,53,69,0.08);
+        color: #b02a37;
+        border-color: rgba(220,53,69,0.25);
+    }
+
+    .clickable{
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .modal-body .form-label{
+        font-weight: 800;
+    }
+    .modal-body .form-control, .modal-body .form-select{
+        border-radius: 12px;
+    }
+
+    .input-with-icon{
+        position: relative;
+    }
+    .input-with-icon .form-control{
+        padding-right: 44px;
+    }
+    .toggle-visibility{
+        position:absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: rgba(30,30,30,0.55);
+        padding: 6px;
+        border-radius: 10px;
+        line-height: 0;
+        cursor: pointer;
+        transition: background .12s ease, color .12s ease;
+    }
+    .toggle-visibility:hover{
+        background: rgba(39,170,131,0.10);
+        color: rgba(30,30,30,0.75);
+    }
+
+    .pw-meter{
+        display:flex;
+        align-items:center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 8px;
+    }
+    .pw-meter .label{
+        font-weight: 800;
+        color: rgba(0,0,0,0.55);
+        font-size: 0.78rem;
+        letter-spacing: 0.02em;
+    }
+    .pw-meter .pill{
+        font-weight: 900;
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(0,0,0,0.08);
+        background: rgba(0,0,0,0.04);
+        color: rgba(0,0,0,0.55);
+        min-width: 84px;
+        text-align:center;
+    }
+    .pw-meter .pill.weak{
+        background: rgba(220,53,69,0.10);
+        border-color: rgba(220,53,69,0.25);
+        color: #b02a37;
+    }
+    .pw-meter .pill.medium{
+        background: rgba(245,158,11,0.12);
+        border-color: rgba(245,158,11,0.28);
+        color: #9a6200;
+    }
+    .pw-meter .pill.strong{
+        background: rgba(39,170,131,0.12);
+        border-color: rgba(39,170,131,0.28);
+        color: #197a60;
+    }
+
+    .icon-grid{
+        display:grid;
+        grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+        gap: 12px;
+    }
+    .icon-choice{
+        border: 2px solid rgba(39,170,131,0.18);
+        border-radius: 14px;
+        background: rgba(39,170,131,0.06);
+        padding: 10px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .icon-choice:hover{
+        transform: translateY(-1px);
+        border-color: rgba(39,170,131,0.35);
+        background: rgba(39,170,131,0.10);
+    }
+    .icon-choice img{
+        width: 54px;
+        height: 54px;
+        object-fit: cover;
+        border-radius: 999px;
+        background: #fff;
+    }
+</style>
+
+<div class="settings-page">
+    <div class="settings-shell">
+        <div class="settings-title">Account Settings</div>
+
+        @if (TempData["SettingsSuccess"] != null)
+        {
+            <div class="banner success">@TempData["SettingsSuccess"]</div>
+        }
+        @if (TempData["SettingsError"] != null)
+        {
+            <div class="banner error">@TempData["SettingsError"]</div>
+        }
+
+        <div class="settings-card">
+            <div class="settings-section">Basic info</div>
+
+            <div class="profile-row">
+                <div class="profile-img">
+                    <img src="@Model.ProfileImageUrl" alt="Profile picture" />
+                </div>
+                <div class="profile-actions">
+                    <div class="select clickable" data-bs-toggle="modal" data-bs-target="#iconModal">Select icon</div>
+                    <div class="hint">Choose from built-in icons</div>
+                </div>
+            </div>
+
+            <div class="settings-list">
+                <div class="settings-item">
+                    <div class="label">Name</div>
+                    <div class="right">
+                        <div class="value">@Model.Name</div>
+                        <i class="iconoir-nav-arrow-right chev"></i>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <div class="label">Date of Birth</div>
+                    <div class="right @(Model.DateOfBirthLabel == "—" ? "clickable" : "")"
+                         data-bs-toggle="@(Model.DateOfBirthLabel == "—" ? "modal" : null)"
+                         data-bs-target="@(Model.DateOfBirthLabel == "—" ? "#basicInfoModal" : null)">
+                        <div class="value">@Model.DateOfBirthLabel</div>
+                        <i class="iconoir-nav-arrow-right chev"></i>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <div class="label">Gender</div>
+                    <div class="right @(Model.GenderLabel == "—" ? "clickable" : "")"
+                         data-bs-toggle="@(Model.GenderLabel == "—" ? "modal" : null)"
+                         data-bs-target="@(Model.GenderLabel == "—" ? "#basicInfoModal" : null)">
+                        <div class="value">@Model.GenderLabel</div>
+                        <i class="iconoir-nav-arrow-right chev"></i>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <div class="label">Email</div>
+                    <div class="right">
+                        <div class="value">@Model.Email</div>
+                        <i class="iconoir-nav-arrow-right chev"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section" style="margin-top: 2.2rem;">Account info</div>
+
+            <div class="settings-list">
+                <div class="settings-item">
+                    <div class="label">Username</div>
+                    <div class="right clickable" data-bs-toggle="modal" data-bs-target="#usernameModal">
+                        <div class="value">@Model.Username</div>
+                        <i class="iconoir-nav-arrow-right chev"></i>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <div class="label">Password</div>
+                    <div class="right clickable" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                        <div class="value">••••••••••••</div>
+                        <i class="iconoir-nav-arrow-right chev"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Username Modal -->
+<div class="modal fade" id="usernameModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Update Username</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Settings" asp-action="UpdateUsername" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input class="form-control" name="Username" value="@Model.Username" />
+                        <div class="hint mt-2">Letters/numbers/._ only</div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 add-transaction-btn">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Password Modal -->
+<div class="modal fade" id="passwordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Change Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Settings" asp-action="ChangePassword" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label class="form-label">Current password</label>
+                        <div class="input-with-icon">
+                            <input class="form-control js-current-password" type="password" name="CurrentPassword" />
+                            <button type="button" class="toggle-visibility js-toggle-current" aria-label="Show password">
+                                <i class="iconoir-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">New password</label>
+                        <div class="input-with-icon">
+                            <input class="form-control js-new-password" type="password" name="NewPassword" />
+                            <button type="button" class="toggle-visibility js-toggle-new" aria-label="Show password">
+                                <i class="iconoir-eye"></i>
+                            </button>
+                        </div>
+                        <div class="pw-meter" aria-live="polite">
+                            <div class="label">Password strength</div>
+                            <div class="pill js-pw-strength">—</div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 add-transaction-btn">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Basic Info Modal (set once) -->
+<div class="modal fade" id="basicInfoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Set Basic Info</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="hint mb-3">Date of birth and gender can only be set once.</div>
+                <form asp-controller="Settings" asp-action="SetBasicInfo" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label class="form-label">Date of birth</label>
+                        <input class="form-control" type="date" name="DateOfBirth" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Gender</label>
+                        <select class="form-select" name="Gender" required>
+                            <option value="" selected disabled>Select</option>
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 add-transaction-btn">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        function toggle(btn, input) {
+            if (!btn || !input) return;
+            btn.addEventListener('click', () => {
+                const isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+                btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+                btn.innerHTML = isHidden ? '<i class="iconoir-eye-closed"></i>' : '<i class="iconoir-eye"></i>';
+            });
+        }
+
+        function computeStrength(pw) {
+            const p = pw || '';
+            let score = 0;
+            if (p.length >= 8) score++;
+            if (p.length >= 12) score++;
+            if (/[a-z]/.test(p)) score++;
+            if (/[A-Z]/.test(p)) score++;
+            if (/\d/.test(p)) score++;
+            if (/[^a-zA-Z0-9]/.test(p)) score++;
+
+            if (p.length === 0) return { label: '—', cls: '' };
+            if (score <= 2) return { label: 'Weak', cls: 'weak' };
+            if (score <= 4) return { label: 'Medium', cls: 'medium' };
+            return { label: 'Strong', cls: 'strong' };
+        }
+
+        const currentPwd = document.querySelector('.js-current-password');
+        const newPwd = document.querySelector('.js-new-password');
+        toggle(document.querySelector('.js-toggle-current'), currentPwd);
+        toggle(document.querySelector('.js-toggle-new'), newPwd);
+
+        const strengthEl = document.querySelector('.js-pw-strength');
+        if (newPwd && strengthEl) {
+            const update = () => {
+                const s = computeStrength(newPwd.value);
+                strengthEl.textContent = s.label;
+                strengthEl.classList.remove('weak', 'medium', 'strong');
+                if (s.cls) strengthEl.classList.add(s.cls);
+            };
+            newPwd.addEventListener('input', update);
+            update();
+        }
+    })();
+</script>
+
+<!-- Icon Picker Modal -->
+<div class="modal fade" id="iconModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content custom-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Select Icon</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="icon-grid">
+                    @{
+                        var icons = new[]
+                        {
+                            "/Assets/images/businessman.png",
+                            "/Assets/images/businessman (1).png",
+                            "/Assets/images/businessman (2).png",
+                            "/Assets/images/businessman (3).png",
+                            "/Assets/images/businessman (4).png",
+                            "/Assets/images/businessman (5).png",
+                            "/Assets/images/businessman (6).png",
+                            "/Assets/images/bussiness-man.png",
+                            "/Assets/images/busineswoman.png",
+                            "/Assets/images/busineswoman (1).png"
+                        };
+                    }
+                    @foreach (var icon in icons)
+                    {
+                        <form asp-controller="Settings" asp-action="SelectIcon" method="post" class="m-0">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="iconPath" value="@icon" />
+                            <button type="submit" class="icon-choice w-100" title="Select">
+                                <img src="@icon" alt="Icon" />
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

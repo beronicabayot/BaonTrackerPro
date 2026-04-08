@@ -7,6 +7,9 @@ namespace BaonTrackerPro.Models
     {
         public int Id { get; set; }
 
+        public int? AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
+
         [Required]
         public decimal Amount { get; set; }
 

@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - BaonTracker PRO</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐷%3C/text%3E%3C/svg%3E" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/iconoir/css/iconoir.css" asp-append-version="true" />
@@ -17,7 +18,8 @@
     <div class="mobile-topbar">
         <div class="sidebar-brand">
             <div class="brand-icon">
-                <i class="iconoir-piggy-bank"></i>
+                <span class="brand-mark-emoji" aria-hidden="true">🐷</span>
+                <i class="iconoir-piggy-bank brand-mark-icon" aria-hidden="true"></i>
             </div>
             <div class="header-text-stacked">
                 <div class="baon-text">BaonTracker</div>
@@ -45,7 +47,8 @@
                     <!-- Brand -->
                     <div class="sidebar-brand">
                         <div class="brand-icon">
-                            <i class="iconoir-piggy-bank"></i>
+                            <span class="brand-mark-emoji" aria-hidden="true">🐷</span>
+                            <i class="iconoir-piggy-bank brand-mark-icon" aria-hidden="true"></i>
                         </div>
                         <div class="header-text-stacked">
                             <div class="baon-text">BaonTracker</div>
@@ -100,11 +103,33 @@
                     </div>
 
                     <!-- User Profile -->
-                    <div class="sidebar-user">
-                        <div class="user-avatar">
-                            <i class="iconoir-user"></i>
-                        </div>
-                        <span class="user-name">Beronica Bayot</span>
+                    <div class="dropdown">
+                        <button class="sidebar-user dropdown-toggle w-100"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                style="border:none;">
+                            <div class="user-avatar">
+                                <i class="iconoir-user"></i>
+                            </div>
+                            <span class="user-name">@(User?.Identity?.IsAuthenticated == true ? (User.Identity?.Name ?? "User") : "Guest")</span>
+                        </button>
+                        <ul class="dropdown-menu w-100" style="border-radius: 14px;">
+                            <li>
+                                <a class="dropdown-item" asp-controller="Settings" asp-action="Index">
+                                    <i class="iconoir-settings me-2"></i> Settings
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="px-3 py-1">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger w-100" style="border-radius: 12px;">
+                                        <i class="iconoir-log-out me-2"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
                     </div>
 
                 </div>

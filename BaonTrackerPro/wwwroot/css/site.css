@@ -96,6 +96,17 @@ main {
     font-size: 1.5rem;
 }
 
+.brand-mark-emoji {
+    display: none;
+    line-height: 1;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 900px) {
+    .brand-mark-emoji { display: inline-block; }
+    .brand-mark-icon { display: none; }
+}
+
 .header-text-stacked {
     display: flex;
     flex-direction: column;
@@ -666,27 +677,35 @@ textarea.form-control {
 @media (max-width: 767px) {
     .mobile-topbar {
         display: flex;
+        padding-top: calc(12px + env(safe-area-inset-top, 0px));
+        padding-left: calc(16px + env(safe-area-inset-left, 0px));
+        padding-right: calc(16px + env(safe-area-inset-right, 0px));
+        padding-bottom: 12px;
+        height: auto; /* allow natural height */
     }
 
+    body { padding-top: var(--app-top-offset, 0px); }
+
     main {
-        margin-top: 60px !important;
         width: 100% !important;
         max-width: 100% !important;
-        padding: 0 !important;
+        padding: 1rem !important;
     }
 
     .sidebar {
+        display: block !important; /* override Bootstrap d-md-block hiding on mobile */
         position: fixed;
         top: 0;
         left: 0;
-        height: 100vh;
+        height: 100dvh;
         width: 260px;
         z-index: 1070;
         background: #fff;
         transform: translateX(-100%);
         transition: transform 0.3s ease;
         overflow-y: auto;
-        padding-top: 1rem;
+        padding-top: calc(1rem + env(safe-area-inset-top, 0px));
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
         box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
     }
 
@@ -1129,4 +1148,128 @@ textarea.form-control {
 .mark-done-btn:hover {
     background-color: #27AA83;
     color: #ffffff;
+}
+
+/* ==================== Global responsiveness hardening ==================== */
+
+/* Prevent horizontal scrolling from long labels/buttons. */
+body {
+    overflow-x: hidden;
+}
+
+/* Make common page shells feel consistent on small screens. */
+@media (max-width: 767px) {
+    .transactions-page,
+    .budget-page,
+    .settings-page {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 575px) {
+    .transactions-page,
+    .budget-page,
+    .settings-page {
+        padding: 0.875rem;
+    }
+}
+
+/* Header toolbars (title + actions) */
+@media (max-width: 767px) {
+    .header-row .add-button,
+    .header-row > .d-flex {
+        width: 100%;
+    }
+
+    .header-row .add-button .btn,
+    .header-row > .d-flex .btn {
+        width: 100%;
+    }
+}
+
+/* Month navigation + filter pills: allow wrapping and prevent overflow. */
+.month-nav {
+    flex-wrap: wrap;
+}
+
+.month-nav-label {
+    max-width: 40ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 575px) {
+    .month-nav {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .month-nav-label {
+        max-width: 55vw;
+        font-size: 13px;
+    }
+
+    .budget-filter-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .custom-dropdown {
+        width: 100%;
+    }
+
+    .custom-dropdown-menu {
+        left: 0;
+        right: 0;
+        min-width: 100%;
+    }
+}
+
+/* Summary cards: scale amounts without clipping. */
+.summary-amount {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 575px) {
+    .summary-amount {
+        font-size: 1.25rem;
+    }
+}
+
+/* Transactions list: keep long content from pushing layout. */
+.transaction-details {
+    min-width: 0;
+}
+
+.transaction-details .title,
+.transaction-details .subtitle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Custom transaction "Details" modal (inline-styled in Razor): constrain on small screens. */
+@media (max-width: 575px) {
+    #detailsModal > div {
+        padding: 1.25rem !important;
+        max-width: calc(100vw - 1.25rem) !important;
+        width: calc(100vw - 1.25rem) !important;
+        max-height: calc(100dvh - 1.25rem) !important;
+        overflow: auto !important;
+    }
+}
+
+/* Dashboard-specific responsiveness (Dashboard uses inline CSS; we override safely here). */
+@media (max-width: 575px) {
+    .spending-inner {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .donut-wrap {
+        margin: 0 auto;
+    }
+
+    .cat-legend {
+        width: 100%;
+    }
 }

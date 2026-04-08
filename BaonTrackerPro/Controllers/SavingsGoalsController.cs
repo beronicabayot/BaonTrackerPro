@@ -2,6 +2,7 @@ using BaonTrackerPro.Data;
 using BaonTrackerPro.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BaonTrackerPro.Controllers
 {
@@ -16,11 +17,14 @@ namespace BaonTrackerPro.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var userId = GetCurrentUserId();
             var goals = await _context.SavingsGoals
-                .Where(g => !g.IsDone)
+                .Where(g => g.AppUserId == userId && !g.IsDone)
                 .ToListAsync();
 
-            var transactions = await _context.Transactions.ToListAsync();
+            var transactions = await _context.Transactions
+                .Where(t => t.AppUserId == userId)
+                .ToListAsync();
             var totalIncome = transactions.Where(t => t.Amount >= 0).Sum(t => t.Amount);
             var totalExpense = transactions.Where(t => t.Amount < 0).Sum(t => t.Amount);
             var net = totalIncome + totalExpense;
@@ -37,8 +41,9 @@ namespace BaonTrackerPro.Controllers
 
         public async Task<IActionResult> Completed()
         {
+            var userId = GetCurrentUserId();
             var completedGoals = await _context.SavingsGoals
-                .Where(g => g.IsDone)
+                .Where(g => g.AppUserId == userId && g.IsDone)
                 .ToListAsync();
             return View(completedGoals);
         }
@@ -46,7 +51,9 @@ namespace BaonTrackerPro.Controllers
         [HttpPost]
         public async Task<IActionResult> MarkAsDone(int id)
         {
-            var goal = await _context.SavingsGoals.FindAsync(id);
+            var userId = GetCurrentUserId();
+            var goal = await _context.SavingsGoals
+                .FirstOrDefaultAsync(g => g.Id == id && g.AppUserId == userId);
             if (goal != null)
             {
                 goal.IsDone = true;
@@ -55,6 +62,7 @@ namespace BaonTrackerPro.Controllers
                 // Add as expense transaction so net is deducted
                 var transaction = new Transaction
                 {
+                    AppUserId = userId,
                     Description = $"Savings Goal: {goal.Name}",
                     Amount = -goal.TargetAmount,
                     Category = "Savings Goal",
@@ -72,6 +80,7 @@ namespace BaonTrackerPro.Controllers
         {
             if (ModelState.IsValid)
             {
+                model.AppUserId = GetCurrentUserId();
                 _context.SavingsGoals.Add(model);
                 await _context.SaveChangesAsync();
             }
@@ -83,6 +92,12 @@ namespace BaonTrackerPro.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userId = GetCurrentUserId();
+                var existing = await _context.SavingsGoals.AsNoTracking()
+                    .FirstOrDefaultAsync(g => g.Id == model.Id && g.AppUserId == userId);
+                if (existing == null) return NotFound();
+
+                model.AppUserId = existing.AppUserId ?? userId;
                 _context.SavingsGoals.Update(model);
                 await _context.SaveChangesAsync();
             }
@@ -92,7 +107,9 @@ namespace BaonTrackerPro.Controllers
         [HttpPost]
         public async Task<IActionResult> AddFunds(int id, decimal amount, string fundAction)
         {
-            var goal = await _context.SavingsGoals.FindAsync(id);
+            var userId = GetCurrentUserId();
+            var goal = await _context.SavingsGoals
+                .FirstOrDefaultAsync(g => g.Id == id && g.AppUserId == userId);
             if (goal != null)
             {
                 if (fundAction == "deduct")
@@ -115,13 +132,21 @@ namespace BaonTrackerPro.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var goal = await _context.SavingsGoals.FindAsync(id);
+            var userId = GetCurrentUserId();
+            var goal = await _context.SavingsGoals
+                .FirstOrDefaultAsync(g => g.Id == id && g.AppUserId == userId);
             if (goal != null)
             {
                 _context.SavingsGoals.Remove(goal);
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction("Index");
+        }
+
+        private int GetCurrentUserId()
+        {
+            var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(value, out var id) ? id : 0;
         }
     }
 }

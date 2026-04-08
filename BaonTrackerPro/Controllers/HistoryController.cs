@@ -2,6 +2,7 @@ using BaonTrackerPro.Data;
 using BaonTrackerPro.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BaonTrackerPro.Controllers
 {
@@ -21,15 +22,18 @@ namespace BaonTrackerPro.Controllers
                 : month;
 
             var parsedMonth = DateTime.ParseExact(selectedMonth, "yyyy-MM", null);
+            var userId = GetCurrentUserId();
 
             // ✅ Fetch ALL transactions for the month first (for summary cards)
             var allForMonth = await _context.Transactions
-                .Where(t => t.Date.Year == parsedMonth.Year && t.Date.Month == parsedMonth.Month)
+                .Where(t => t.AppUserId == userId &&
+                            t.Date.Year == parsedMonth.Year && t.Date.Month == parsedMonth.Month)
                 .ToListAsync();
 
             // ✅ Then apply filter + sort on a separate query for the list
             IQueryable<Transaction> transactions = _context.Transactions
-                .Where(t => t.Date.Year == parsedMonth.Year && t.Date.Month == parsedMonth.Month);
+                .Where(t => t.AppUserId == userId &&
+                            t.Date.Year == parsedMonth.Year && t.Date.Month == parsedMonth.Month);
 
             if (type == "Income")
                 transactions = transactions.Where(t => t.Amount >= 0);
@@ -55,6 +59,12 @@ namespace BaonTrackerPro.Controllers
             ViewBag.Net = allForMonth.Sum(t => t.Amount);
 
             return View(result);
+        }
+
+        private int GetCurrentUserId()
+        {
+            var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(value, out var id) ? id : 0;
         }
     }
 }

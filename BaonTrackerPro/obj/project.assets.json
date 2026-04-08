@@ -2167,19 +2167,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Badeth\\.nuget\\packages\\": {}
+    "C:\\Users\\Bailey\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Badeth\\Desktop\\BaonTrackerPro\\BaonTrackerPro\\BaonTrackerPro.csproj",
+      "projectUniqueName": "C:\\Users\\Bailey\\Documents\\GitHub\\BaonTrackerPro\\BaonTrackerPro\\BaonTrackerPro.csproj",
       "projectName": "BaonTrackerPro",
-      "projectPath": "C:\\Users\\Badeth\\Desktop\\BaonTrackerPro\\BaonTrackerPro\\BaonTrackerPro.csproj",
-      "packagesPath": "C:\\Users\\Badeth\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Badeth\\Desktop\\BaonTrackerPro\\BaonTrackerPro\\obj\\",
+      "projectPath": "C:\\Users\\Bailey\\Documents\\GitHub\\BaonTrackerPro\\BaonTrackerPro\\BaonTrackerPro.csproj",
+      "packagesPath": "C:\\Users\\Bailey\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Bailey\\Documents\\GitHub\\BaonTrackerPro\\BaonTrackerPro\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Badeth\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Bailey\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"

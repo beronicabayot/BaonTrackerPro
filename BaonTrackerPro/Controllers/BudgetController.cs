@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BaonTrackerPro.Data;
 using BaonTrackerPro.Models;
+using System.Security.Claims;
 
 namespace BaonTrackerPro.Controllers
 {
@@ -16,16 +17,20 @@ namespace BaonTrackerPro.Controllers
 
         public async Task<IActionResult> Index(string? month)
         {
+            var userId = GetCurrentUserId();
             var selectedMonth = string.IsNullOrEmpty(month)
                 ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1)
                 : DateTime.ParseExact(month, "yyyy-MM", null);
 
             var budgets = await _context.BudgetItems
-                .Where(b => b.BudgetMonth.Year == selectedMonth.Year &&
+                .Where(b => b.AppUserId == userId &&
+                            b.BudgetMonth.Year == selectedMonth.Year &&
                             b.BudgetMonth.Month == selectedMonth.Month)
                 .ToListAsync();
 
-            var transactions = await _context.Transactions.ToListAsync();
+            var transactions = await _context.Transactions
+                .Where(t => t.AppUserId == userId)
+                .ToListAsync();
 
             var budgetViewModels = budgets.Select(b =>
             {
@@ -54,6 +59,7 @@ namespace BaonTrackerPro.Controllers
             if (ModelState.IsValid)
             {
                 budget.BudgetMonth = new DateTime(budget.BudgetMonth.Year, budget.BudgetMonth.Month, 1);
+                budget.AppUserId = GetCurrentUserId();
                 _context.Add(budget);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -66,7 +72,9 @@ namespace BaonTrackerPro.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var budget = await _context.BudgetItems.FindAsync(id);
+            var userId = GetCurrentUserId();
+            var budget = await _context.BudgetItems
+                .FirstOrDefaultAsync(b => b.Id == id && b.AppUserId == userId);
             if (budget != null)
             {
                 _context.BudgetItems.Remove(budget);
@@ -83,10 +91,22 @@ namespace BaonTrackerPro.Controllers
             if (ModelState.IsValid)
             {
                 budget.BudgetMonth = new DateTime(budget.BudgetMonth.Year, budget.BudgetMonth.Month, 1);
+                var userId = GetCurrentUserId();
+                var existing = await _context.BudgetItems.AsNoTracking()
+                    .FirstOrDefaultAsync(b => b.Id == budget.Id && b.AppUserId == userId);
+                if (existing == null) return NotFound();
+
+                budget.AppUserId = existing.AppUserId ?? userId;
                 _context.Update(budget);
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        private int GetCurrentUserId()
+        {
+            var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(value, out var id) ? id : 0;
         }
     }
 

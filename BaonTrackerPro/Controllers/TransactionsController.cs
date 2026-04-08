@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BaonTrackerPro.Data;
 using BaonTrackerPro.Models;
+using System.Security.Claims;
 
 namespace BaonTrackerPro.Controllers
 {
@@ -17,7 +18,10 @@ namespace BaonTrackerPro.Controllers
         // GET: Transactions
         public async Task<IActionResult> Index(string searchString, string type)
         {
-            IQueryable<Transaction> transactions = _context.Transactions.OrderByDescending(t => t.Date);
+            var userId = GetCurrentUserId();
+            IQueryable<Transaction> transactions = _context.Transactions
+                .Where(t => t.AppUserId == userId)
+                .OrderByDescending(t => t.Date);
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -44,7 +48,9 @@ namespace BaonTrackerPro.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
-            var transaction = await _context.Transactions.FirstOrDefaultAsync(m => m.Id == id);
+            var userId = GetCurrentUserId();
+            var transaction = await _context.Transactions
+                .FirstOrDefaultAsync(m => m.Id == id && m.AppUserId == userId);
             if (transaction == null) return NotFound();
             return View(transaction);
         }
@@ -52,7 +58,9 @@ namespace BaonTrackerPro.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailsJson(int id)
         {
-            var transaction = await _context.Transactions.FindAsync(id);
+            var userId = GetCurrentUserId();
+            var transaction = await _context.Transactions
+                .FirstOrDefaultAsync(t => t.Id == id && t.AppUserId == userId);
             if (transaction == null) return NotFound();
 
             return Json(new
@@ -81,6 +89,7 @@ namespace BaonTrackerPro.Controllers
         {
             if (ModelState.IsValid)
             {
+                transaction.AppUserId = GetCurrentUserId();
                 _context.Add(transaction);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -93,7 +102,9 @@ namespace BaonTrackerPro.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
-            var transaction = await _context.Transactions.FindAsync(id);
+            var userId = GetCurrentUserId();
+            var transaction = await _context.Transactions
+                .FirstOrDefaultAsync(t => t.Id == id && t.AppUserId == userId);
             if (transaction == null) return NotFound();
             return View(transaction);
         }
@@ -108,6 +119,16 @@ namespace BaonTrackerPro.Controllers
             {
                 try
                 {
+                    var userId = GetCurrentUserId();
+                    var existing = await _context.Transactions.AsNoTracking()
+                        .FirstOrDefaultAsync(t => t.Id == transaction.Id && t.AppUserId == userId);
+                    if (existing == null) return NotFound();
+
+                    // Preserve ownership + fields not included in Bind.
+                    transaction.AppUserId = existing.AppUserId;
+                    transaction.IsIncome = existing.IsIncome;
+                    transaction.CategoryIcon = existing.CategoryIcon;
+
                     _context.Update(transaction);
                     await _context.SaveChangesAsync();
                 }
@@ -125,7 +146,9 @@ namespace BaonTrackerPro.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
-            var transaction = await _context.Transactions.FirstOrDefaultAsync(m => m.Id == id);
+            var userId = GetCurrentUserId();
+            var transaction = await _context.Transactions
+                .FirstOrDefaultAsync(m => m.Id == id && m.AppUserId == userId);
             if (transaction == null) return NotFound();
             return View(transaction);
         }
@@ -135,7 +158,9 @@ namespace BaonTrackerPro.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var transaction = await _context.Transactions.FindAsync(id);
+            var userId = GetCurrentUserId();
+            var transaction = await _context.Transactions
+                .FirstOrDefaultAsync(t => t.Id == id && t.AppUserId == userId);
             if (transaction != null)
             {
                 _context.Transactions.Remove(transaction);
@@ -157,9 +182,20 @@ namespace BaonTrackerPro.Controllers
             if (ModelState.IsValid)
             {
                 if (transaction.Id == 0)
+                {
+                    transaction.AppUserId = GetCurrentUserId();
                     _context.Add(transaction);
+                }
                 else
+                {
+                    var userId = GetCurrentUserId();
+                    var existing = await _context.Transactions.AsNoTracking()
+                        .FirstOrDefaultAsync(t => t.Id == transaction.Id && t.AppUserId == userId);
+                    if (existing == null) return NotFound();
+
+                    transaction.AppUserId = existing.AppUserId ?? userId;
                     _context.Update(transaction);
+                }
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -172,7 +208,9 @@ namespace BaonTrackerPro.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTransaction(int id)
         {
-            var transaction = await _context.Transactions.FindAsync(id);
+            var userId = GetCurrentUserId();
+            var transaction = await _context.Transactions
+                .FirstOrDefaultAsync(t => t.Id == id && t.AppUserId == userId);
             if (transaction == null) return NotFound();
 
             return Json(new
@@ -197,8 +235,10 @@ namespace BaonTrackerPro.Controllers
 
             var parsedMonth = DateTime.ParseExact(selectedMonth, "yyyy-MM", null);
 
+            var userId = GetCurrentUserId();
             IQueryable<Transaction> transactions = _context.Transactions
-                .Where(t => t.Date.Year == parsedMonth.Year && t.Date.Month == parsedMonth.Month);
+                .Where(t => t.AppUserId == userId &&
+                            t.Date.Year == parsedMonth.Year && t.Date.Month == parsedMonth.Month);
 
             if (type == "Income")
                 transactions = transactions.Where(t => t.Amount >= 0);
@@ -223,6 +263,12 @@ namespace BaonTrackerPro.Controllers
             ViewBag.Net = result.Sum(t => t.Amount);
 
             return View(result);
+        }
+
+        private int GetCurrentUserId()
+        {
+            var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(value, out var id) ? id : 0;
         }
 
     } // 👈 only ONE closing brace for the class

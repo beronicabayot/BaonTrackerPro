@@ -106,68 +106,51 @@
     .txn-item.new { animation: slideIn .3s ease forwards; }
 </style>
 
-<div class="dashboard-wrapper">
+<div class="transactions-page">
 
-    <div class="dash-header">
-        <div class="dash-header-left">
-            <div class="section-label">Dashboard</div>
-            <div class="date-text">@today</div>
-            <h1>Good Day, @Model.UserName!</h1>
+    <div class="header-row">
+        <div class="title-section">
+            <h1>Dashboard</h1>
+            <p>@today · Good Day, @Model.UserName!</p>
         </div>
     </div>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-card-top">
-                <span class="stat-label">Balance</span>
-                <span class="stat-icon balance">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <rect x="1" y="4" width="14" height="10" rx="2" stroke="#3b82f6" stroke-width="1.5"/>
-                        <path d="M1 7h14" stroke="#3b82f6" stroke-width="1.5"/>
-                        <rect x="3" y="9" width="3" height="2" rx=".5" fill="#3b82f6"/>
-                    </svg>
-                </span>
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="summary-card">
+                <div class="summary-label">BALANCE</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="summary-amount" id="statBalance">₱@Model.Balance.ToString("N2")</div>
+                    <i class="iconoir-wallet summary-icon" style="color:#27AA83;"></i>
+                </div>
             </div>
-            <div class="stat-value" id="statBalance">&#8369;@Model.Balance.ToString("N2")</div>
         </div>
-
-        <div class="stat-card">
-            <div class="stat-card-top">
-                <span class="stat-label">Income</span>
-                <span class="stat-icon income">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M3 11L8 5l5 6" stroke="#1a9f6e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </span>
+        <div class="col-md-3 col-6">
+            <div class="summary-card">
+                <div class="summary-label">INCOME</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="summary-amount text-success" id="statIncome">+₱@Model.Income.ToString("N2")</div>
+                    <i class="iconoir-arrow-up-right summary-icon" style="color:#27AA83;"></i>
+                </div>
             </div>
-            <div class="stat-value" id="statIncome">&#8369;@Model.Income.ToString("N2")</div>
         </div>
-
-        <div class="stat-card">
-            <div class="stat-card-top">
-                <span class="stat-label">Expenses</span>
-                <span class="stat-icon expense">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M3 5l5 6 5-6" stroke="#e53e3e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </span>
+        <div class="col-md-3 col-6">
+            <div class="summary-card">
+                <div class="summary-label">EXPENSES</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="summary-amount text-danger" id="statExpenses">-₱@Model.Expenses.ToString("N2")</div>
+                    <i class="iconoir-arrow-down-right summary-icon" style="color:#dc3545;"></i>
+                </div>
             </div>
-            <div class="stat-value" id="statExpenses">&#8369;@Model.Expenses.ToString("N2")</div>
         </div>
-
-        <div class="stat-card">
-            <div class="stat-card-top">
-                <span class="stat-label">Savings Goals</span>
-                <span class="stat-icon savings">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <ellipse cx="8" cy="9" rx="6" ry="5" stroke="#f59e0b" stroke-width="1.5"/>
-                        <path d="M5 5.5C5 4 6.5 2.5 8 2.5s3 1.5 3 3" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M10.5 8H14" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
-                        <circle cx="12" cy="10" r=".75" fill="#f59e0b"/>
-                    </svg>
-                </span>
+        <div class="col-md-3 col-6">
+            <div class="summary-card">
+                <div class="summary-label">SAVINGS GOALS</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="summary-amount" id="statSavings">₱@Model.SavingsGoals.ToString("N2")</div>
+                    <i class="iconoir-piggy-bank summary-icon" style="color:#f59e0b;"></i>
+                </div>
             </div>
-            <div class="stat-value" id="statSavings">&#8369;@Model.SavingsGoals.ToString("N2")</div>
         </div>
     </div>
 
@@ -245,54 +228,41 @@
         </div>
     </div>
 
-    <div class="txn-card">
-        <div class="txn-header">
-            <div class="card-title" style="margin-bottom:0;">Recent Transactions</div>
-            <a href="/Transactions">View All
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path d="M4 7h6M7 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </a>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+        <h6 class="fw-bold mb-0">Recent Transactions</h6>
+        <a class="text-decoration-none" style="color:#27AA83; font-weight:600;" href="/Transactions">View All</a>
+    </div>
 
-        <div class="txn-list" id="txnList">
+    <div class="transaction-card" id="txnList">
             @if (Model.RecentTransactions != null && Model.RecentTransactions.Any())
             {
                 @foreach (var txn in Model.RecentTransactions)
                 {
-                    <div class="txn-item">
-                        <div class="txn-avatar">@txn.CategoryIcon</div>
-                        <div class="txn-info">
-                            <div class="txn-name">@txn.Description</div>
-                            <div class="txn-meta">@txn.Category · @txn.Date.ToString("MMM dd")</div>
+                    var isIncome = txn.Amount >= 0;
+                    <div class="transaction-row">
+                        <div class="icon-bg @(isIncome ? "income-bg" : "expense-bg")">
+                            <span class="emoji">@txn.CategoryIcon</span>
                         </div>
-                        <div class="txn-amount @(txn.IsIncome ? "income" : "expense")">
-                            @if (txn.IsIncome)
-                            {
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                    <path d="M2 8L6 3l4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>+ &#8369;@txn.Amount.ToString("N2")</span>
-                            }
-                            else
-                            {
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                    <path d="M2 4l4 5 4-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>- &#8369;@txn.Amount.ToString("N2")</span>
-                            }
+                        <div class="transaction-details">
+                            <div class="title">@txn.Description</div>
+                            <div class="subtitle">@txn.Category · @txn.Date.ToString("MMM dd")</div>
+                        </div>
+                        <div class="transaction-amount">
+                            <span class="@(isIncome ? "positive-amount" : "negative-amount")">
+                                <i class="@(isIncome ? "iconoir-arrow-up-right" : "iconoir-arrow-down-right")"></i>
+                                @(isIncome ? "+" : "-") ₱ @Math.Abs(txn.Amount).ToString("N2")
+                            </span>
                         </div>
                     </div>
                 }
             }
             else
             {
-                <div class="savings-empty" id="emptyState">
+                <div class="empty-state" id="emptyState">
+                    <i class="iconoir-wallet" style="font-size: 3rem; color: #adb5bd;"></i>
                     <p>No transactions yet</p>
                 </div>
             }
-        </div>
-    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -324,8 +294,8 @@
 
     function updateStats(data) {
         fadeUpdate('statBalance',  '₱' + formatNumber(data.balance));
-        fadeUpdate('statIncome',   '₱' + formatNumber(data.income));
-        fadeUpdate('statExpenses', '₱' + formatNumber(data.expenses));
+        fadeUpdate('statIncome',   '+₱' + formatNumber(data.income));
+        fadeUpdate('statExpenses', '-₱' + formatNumber(data.expenses));
         fadeUpdate('statSavings',  '₱' + formatNumber(data.savingsGoals));
     }
 
@@ -335,31 +305,37 @@
 
         if (!transactions || transactions.length === 0) {
             list.innerHTML = `
-                <div class="savings-empty" id="emptyState">
+                <div class="empty-state" id="emptyState">
+                    <i class="iconoir-wallet" style="font-size: 3rem; color: #adb5bd;"></i>
                     <p>No transactions yet</p>
-                </div>`;
+                </div>
+            `;
             return;
         }
 
-        const arrowUp   = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 8L6 3l4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-        const arrowDown = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 5 4-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
         list.innerHTML = transactions.map(txn => {
-            const amountClass = txn.isIncome ? 'income' : 'expense';
-            const sign  = txn.isIncome ? '+ ₱' : '- ₱';
-            const arrow = txn.isIncome ? arrowUp : arrowDown;
+            const isIncome = !!txn.isIncome;
+            const amountClass = isIncome ? 'positive-amount' : 'negative-amount';
+            const iconBgClass = isIncome ? 'income-bg' : 'expense-bg';
+            const arrowIcon = isIncome ? 'iconoir-arrow-up-right' : 'iconoir-arrow-down-right';
+            const sign = isIncome ? '+' : '-';
             return `
-                <div class="txn-item">
-                    <div class="txn-avatar">${txn.categoryIcon}</div>
-                    <div class="txn-info">
-                        <div class="txn-name">${escapeHtml(txn.description)}</div>
-                        <div class="txn-meta">${escapeHtml(txn.category)} · ${txn.date}</div>
+                <div class="transaction-row">
+                    <div class="icon-bg ${iconBgClass}">
+                        <span class="emoji">${txn.categoryIcon ?? '📦'}</span>
                     </div>
-                    <div class="txn-amount ${amountClass}">
-                        ${arrow}
-                        <span>${sign}${formatNumber(txn.amount)}</span>
+                    <div class="transaction-details">
+                        <div class="title">${escapeHtml(txn.description)}</div>
+                        <div class="subtitle">${escapeHtml(txn.category)} · ${txn.date}</div>
                     </div>
-                </div>`;
+                    <div class="transaction-amount">
+                        <span class="${amountClass}">
+                            <i class="${arrowIcon}"></i>
+                            ${sign} ₱ ${formatNumber(txn.amount)}
+                        </span>
+                    </div>
+                </div>
+            `;
         }).join('');
     }
 

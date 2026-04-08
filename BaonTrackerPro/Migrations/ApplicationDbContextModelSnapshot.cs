@@ -22,6 +22,57 @@ namespace BaonTrackerPro.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("BaonTrackerPro.Models.AppUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DateOfBirthUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProfileIconPath")
+                        .HasMaxLength(260)
+                        .HasColumnType("character varying(260)");
+
+                    b.Property<string>("Username")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("AppUsers");
+                });
+
             modelBuilder.Entity("BaonTrackerPro.Models.BudgetItem", b =>
                 {
                     b.Property<int>("Id")
@@ -32,6 +83,9 @@ namespace BaonTrackerPro.Migrations
 
                     b.Property<decimal>("AmountLimit")
                         .HasColumnType("numeric");
+
+                    b.Property<int?>("AppUserId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("BudgetMonth")
                         .HasColumnType("timestamp with time zone");
@@ -49,6 +103,8 @@ namespace BaonTrackerPro.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AppUserId");
+
                     b.ToTable("BudgetItems");
                 });
 
@@ -59,6 +115,9 @@ namespace BaonTrackerPro.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AppUserId")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("CurrentAmount")
                         .HasColumnType("numeric");
@@ -81,6 +140,8 @@ namespace BaonTrackerPro.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AppUserId");
+
                     b.ToTable("SavingsGoals");
                 });
 
@@ -94,6 +155,9 @@ namespace BaonTrackerPro.Migrations
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
+
+                    b.Property<int?>("AppUserId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -117,7 +181,39 @@ namespace BaonTrackerPro.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AppUserId");
+
                     b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("BaonTrackerPro.Models.BudgetItem", b =>
+                {
+                    b.HasOne("BaonTrackerPro.Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("BaonTrackerPro.Models.SavingsGoal", b =>
+                {
+                    b.HasOne("BaonTrackerPro.Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("BaonTrackerPro.Models.Transaction", b =>
+                {
+                    b.HasOne("BaonTrackerPro.Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("AppUser");
                 });
 #pragma warning restore 612, 618
         }

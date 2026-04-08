@@ -30,10 +30,37 @@ namespace BaonTrackerPro.Data
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<BudgetItem> BudgetItems { get; set; }
         public DbSet<SavingsGoal> SavingsGoals { get; set; }
+        public DbSet<AppUser> AppUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<AppUser>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<AppUser>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.AppUser)
+                .WithMany()
+                .HasForeignKey(t => t.AppUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<SavingsGoal>()
+                .HasOne(g => g.AppUser)
+                .WithMany()
+                .HasForeignKey(g => g.AppUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BudgetItem>()
+                .HasOne(b => b.AppUser)
+                .WithMany()
+                .HasForeignKey(b => b.AppUserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {

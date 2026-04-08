@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BaonTrackerPro.Data;
 using BaonTrackerPro.Models;
+using System.Security.Claims;
 
 namespace BaonTrackerPro.Controllers
 {
@@ -49,8 +50,8 @@ namespace BaonTrackerPro.Controllers
                     description = t.Description,
                     category = t.Category,
                     categoryIcon = t.CategoryIcon,
-                    amount = t.Amount,
-                    isIncome = t.IsIncome,
+                    amount = Math.Abs(t.Amount),
+                    isIncome = IsIncomeTransaction(t),
                     date = t.Date.ToString("MMM dd")
                 })
             });
@@ -68,8 +69,9 @@ namespace BaonTrackerPro.Controllers
         {
             var transaction = new Transaction
             {
+                AppUserId = GetCurrentUserId(),
                 Description = Description,
-                Amount = Math.Abs(Amount),
+                Amount = IsIncome ? Math.Abs(Amount) : -Math.Abs(Amount),
                 Category = Category,
                 Date = Date,
                 Notes = Notes,
@@ -92,7 +94,7 @@ namespace BaonTrackerPro.Controllers
                 transaction = new
                 {
                     description = transaction.Description,
-                    amount = transaction.Amount,
+                    amount = Math.Abs(transaction.Amount),
                     isIncome = transaction.IsIncome,
                     category = transaction.Category,
                     categoryIcon = transaction.CategoryIcon,
@@ -103,28 +105,33 @@ namespace BaonTrackerPro.Controllers
 
         private async Task<FinanceDashboardViewModel> BuildDashboardViewModel()
         {
+            var userId = GetCurrentUserId();
             var transactions = await _context.Transactions
+                .AsNoTracking()
+                .Where(t => t.AppUserId == userId)
                 .OrderByDescending(t => t.Date)
                 .ThenByDescending(t => t.Id)
                 .ToListAsync();
 
             var goals = await _context.SavingsGoals
+                .AsNoTracking()
+                .Where(g => g.AppUserId == userId)
                 .OrderBy(g => g.Id)
                 .ToListAsync();
 
             var income = transactions
-                .Where(t => t.IsIncome)
-                .Sum(t => t.Amount);
+                .Where(IsIncomeTransaction)
+                .Sum(t => Math.Abs(t.Amount));
 
             var expenses = transactions
-                .Where(t => !t.IsIncome)
-                .Sum(t => t.Amount);
+                .Where(t => !IsIncomeTransaction(t))
+                .Sum(t => Math.Abs(t.Amount));
 
             var balance = income - expenses;
             var totalExpense = expenses;
 
             var spendingByCategory = transactions
-                .Where(t => !t.IsIncome)
+                .Where(t => !IsIncomeTransaction(t))
                 .GroupBy(t => t.Category)
                 .Select(g => new SpendingCategory
                 {
@@ -143,7 +150,7 @@ namespace BaonTrackerPro.Controllers
 
             return new FinanceDashboardViewModel
             {
-                UserName = "Beronica",
+                UserName = User?.Identity?.Name ?? "User",
                 Balance = balance,
                 Income = income,
                 Expenses = expenses,
@@ -167,6 +174,19 @@ namespace BaonTrackerPro.Controllers
                 "Personal/Lifestyle" => "🛍",
                 _ => "📦"
             };
+        }
+
+        private static bool IsIncomeTransaction(Transaction transaction)
+        {
+            // Keep compatibility with old rows that relied on amount sign,
+            // while supporting newer rows that explicitly use IsIncome.
+            return transaction.IsIncome || transaction.Amount > 0;
+        }
+
+        private int GetCurrentUserId()
+        {
+            var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(value, out var id) ? id : 0;
         }
 
         private string GetCategoryColor(string? category)
