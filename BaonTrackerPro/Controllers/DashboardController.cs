@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using BaonTrackerPro.Data;
 using BaonTrackerPro.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
 
 namespace BaonTrackerPro.Controllers
 {
@@ -19,6 +21,16 @@ namespace BaonTrackerPro.Controllers
         {
             var vm = await BuildDashboardViewModel();
             return View(vm);
+        }
+
+        [AllowAnonymous]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View("~/Views/Shared/Error.cshtml", new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            });
         }
 
         [HttpGet]
