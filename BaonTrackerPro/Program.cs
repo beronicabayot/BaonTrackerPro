@@ -47,11 +47,15 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 // Serve /Assets/* from the project Assets folder (for fixed profile images, etc.)
-app.UseStaticFiles(new StaticFileOptions
+var assetsPath = Path.Combine(builder.Environment.ContentRootPath, "Assets");
+if (Directory.Exists(assetsPath))
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "Assets")),
-    RequestPath = "/Assets"
-});
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(assetsPath),
+        RequestPath = "/Assets"
+    });
+}
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
