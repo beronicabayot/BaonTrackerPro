@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using BaonTrackerPro.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +27,9 @@ builder.Services
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/Login";
         options.Cookie.Name = "BaonTrackerPro.Auth";
+        // Behind Render's proxy we want a cookie that will be accepted on HTTPS.
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Lax;
     });
 
 // Require login by default for the app (Account/* stays anonymous).
@@ -37,6 +41,12 @@ builder.Services.AddAuthorization(options =>
 });
 
 var app = builder.Build();
+
+// Render terminates TLS at the edge; trust proxy headers so scheme/remote IP are correct.
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 if (!app.Environment.IsDevelopment())
 {
