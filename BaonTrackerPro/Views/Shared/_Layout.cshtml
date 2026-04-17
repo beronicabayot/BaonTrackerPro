@@ -5,17 +5,22 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - BaonTracker PRO</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐷%3C/text%3E%3C/svg%3E" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/Assets/images/pngegg.png?v=6" />
+    <link rel="shortcut icon" type="image/png" href="/Assets/images/pngegg.png?v=6" />
+    <link rel="apple-touch-icon" href="/Assets/images/pngegg.png?v=6" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/iconoir/css/iconoir.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 
-<body>
+<body class="app-shell sidebar-expanded">
 
     <!-- Mobile Top Bar -->
     <div class="mobile-topbar">
+        <button id="sidebarToggleMobile" class="sidebar-burger-btn" aria-label="Toggle sidebar" aria-expanded="false">
+            <span class="sidebar-toggle-glyph" aria-hidden="true"></span>
+        </button>
         <div class="sidebar-brand">
             <div class="brand-icon">
                 <span class="brand-mark-emoji" aria-hidden="true">🐷</span>
@@ -29,122 +34,143 @@
                 </div>
             </div>
         </div>
-        <button id="sidebarToggle">
-            <i class="iconoir-menu"></i>
-        </button>
     </div>
 
     <!-- Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <div class="container-fluid">
-        <div class="row">
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <nav class="sidebar w-64 transition-all duration-300" id="sidebar">
+            <div class="sidebar-inner">
+                <!-- Top controls -->
+                <div class="sidebar-top-row">
+                    <button id="sidebarToggleDesktop"
+                            class="sidebar-burger-btn"
+                            type="button"
+                            aria-label="Toggle sidebar"
+                            aria-expanded="true">
+                        <span class="sidebar-toggle-glyph" aria-hidden="true"></span>
+                    </button>
+                </div>
 
-            <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
-                <div class="sidebar-inner">
-
-                    <!-- Brand -->
-                    <div class="sidebar-brand">
-                        <div class="brand-icon">
-                            <span class="brand-mark-emoji" aria-hidden="true">🐷</span>
-                            <i class="iconoir-piggy-bank brand-mark-icon" aria-hidden="true"></i>
-                        </div>
-                        <div class="header-text-stacked">
-                            <div class="baon-text">BaonTracker</div>
-                            <div class="pro-wrapper">
-                                <i class="iconoir-sparks gold-icon-sm"></i>
-                                <span class="pro-text">PRO</span>
-                            </div>
+                <!-- Brand -->
+                <div class="sidebar-brand">
+                    <div class="brand-icon">
+                        <span class="brand-mark-emoji" aria-hidden="true">🐷</span>
+                        <i class="iconoir-piggy-bank brand-mark-icon" aria-hidden="true"></i>
+                    </div>
+                    <div class="header-text-stacked">
+                        <div class="baon-text">BaonTracker</div>
+                        <div class="pro-wrapper">
+                            <i class="iconoir-sparks gold-icon-sm"></i>
+                            <span class="pro-text">PRO</span>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Nav Links -->
-                    <ul class="nav flex-column sidebar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
-                                   asp-controller="Dashboard" asp-action="Index">
-                                <i class="iconoir-report-columns"></i> Dashboard
+                <!-- Nav Links -->
+                <ul class="nav flex-column sidebar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
+                           asp-controller="Dashboard"
+                           asp-action="Index"
+                           data-tooltip="Dashboard">
+                            <i class="iconoir-report-columns"></i>
+                            <span class="nav-label">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Transactions" ? "active" : "")"
+                           asp-controller="Transactions"
+                           asp-action="Index"
+                           data-tooltip="Transactions">
+                            <i class="iconoir-data-transfer-both"></i>
+                            <span class="nav-label">Transactions</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Budget" ? "active" : "")"
+                           asp-controller="Budget"
+                           asp-action="Index"
+                           data-tooltip="Budget">
+                            <i class="iconoir-piggy-bank"></i>
+                            <span class="nav-label">Budget</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "SavingsGoals" ? "active" : "")"
+                           asp-controller="SavingsGoals"
+                           asp-action="Index"
+                           data-tooltip="Saving Goals">
+                            <i class="iconoir-wallet"></i>
+                            <span class="nav-label">Saving Goals</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "History" ? "active" : "")"
+                           asp-controller="History"
+                           asp-action="Index"
+                           data-tooltip="History">
+                            <i class="iconoir-clock-rotate-right"></i>
+                            <span class="nav-label">History</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Spacer -->
+                <div class="sidebar-spacer"></div>
+
+                <!-- Tip Card -->
+                <div class="sidebar-tip-card">
+                    <p class="tip-title">Track Smarter 💡</p>
+                    <p class="tip-body">Add your daily expenses to stay on top of your baon!</p>
+                </div>
+
+                <!-- User Profile -->
+                <div class="dropdown sidebar-user-wrap">
+                    <button class="sidebar-user dropdown-toggle w-100"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                            style="border:none;"
+                            data-tooltip="User Menu">
+                        <div class="user-avatar">
+                            <i class="iconoir-user"></i>
+                        </div>
+                        <span class="user-name">@(User?.Identity?.IsAuthenticated == true ? (User.Identity?.Name ?? "User") : "Guest")</span>
+                    </button>
+                    <ul class="dropdown-menu w-100" style="border-radius: 14px;">
+                        <li>
+                            <a class="dropdown-item" asp-controller="Settings" asp-action="Index">
+                                <i class="iconoir-settings me-2"></i> Settings
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Transactions" ? "active" : "")"
-                                   asp-controller="Transactions" asp-action="Index">
-                                <i class="iconoir-data-transfer-both"></i> Transactions
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Budget" ? "active" : "")"
-                                   asp-controller="Budget" asp-action="Index">
-                                <i class="iconoir-piggy-bank"></i> Budget
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "SavingsGoals" ? "active" : "")"
-                                   asp-controller="SavingsGoals" asp-action="Index">
-                                <i class="iconoir-wallet"></i> Saving Goals
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "History" ? "active" : "")"
-                                   asp-controller="History" asp-action="Index">
-                                <i class="iconoir-clock-rotate-right"></i> History
-                            </a>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="px-3 py-1">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger w-100" style="border-radius: 12px;">
+                                    <i class="iconoir-log-out me-2"></i> Logout
+                                </button>
+                            </form>
                         </li>
                     </ul>
-
-                    <!-- Spacer -->
-                    <div class="sidebar-spacer"></div>
-
-                    <!-- Tip Card -->
-                    <div class="sidebar-tip-card">
-                        <p class="tip-title">Track Smarter 💡</p>
-                        <p class="tip-body">Add your daily expenses to stay on top of your baon!</p>
-                    </div>
-
-                    <!-- User Profile -->
-                    <div class="dropdown">
-                        <button class="sidebar-user dropdown-toggle w-100"
-                                type="button"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                                style="border:none;">
-                            <div class="user-avatar">
-                                <i class="iconoir-user"></i>
-                            </div>
-                            <span class="user-name">@(User?.Identity?.IsAuthenticated == true ? (User.Identity?.Name ?? "User") : "Guest")</span>
-                        </button>
-                        <ul class="dropdown-menu w-100" style="border-radius: 14px;">
-                            <li>
-                                <a class="dropdown-item" asp-controller="Settings" asp-action="Index">
-                                    <i class="iconoir-settings me-2"></i> Settings
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form asp-controller="Account" asp-action="Logout" method="post" class="px-3 py-1">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-danger w-100" style="border-radius: 12px;">
-                                        <i class="iconoir-log-out me-2"></i> Logout
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-
                 </div>
-            </nav>
+            </div>
+        </nav>
 
-            <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                @RenderBody()
-            </main>
-        </div>
+        <!-- Main content -->
+        <main class="app-main">
+            @RenderBody()
+        </main>
     </div>
+    <partial name="_BottomNav" />
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/month-picker.js" asp-append-version="true"></script>
     <script src="~/js/layout.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -1,0 +1,28 @@
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+    bool isHome = controller == "Dashboard";
+    bool isStats = controller == "Budget" || controller == "SavingsGoals";
+    bool isHistory = controller == "History" || controller == "Transactions";
+    bool isProfile = controller == "Settings" || controller == "Account";
+}
+
+<nav class="bottom-nav" aria-label="Bottom Navigation">
+    <a class="bottom-nav-item @(isHome ? "active" : "")" asp-controller="Dashboard" asp-action="Index">
+        <i class="iconoir-home-alt" aria-hidden="true"></i>
+        <span>Home</span>
+    </a>
+    <a class="bottom-nav-item @(isStats ? "active" : "")" asp-controller="Budget" asp-action="Index">
+        <i class="iconoir-graph-up" aria-hidden="true"></i>
+        <span>Stats</span>
+    </a>
+    <a class="bottom-nav-item @(isHistory ? "active" : "")" asp-controller="History" asp-action="Index">
+        <i class="iconoir-clock-rotate-right" aria-hidden="true"></i>
+        <span>History</span>
+    </a>
+    <a class="bottom-nav-item @(isProfile ? "active" : "")" asp-controller="Settings" asp-action="Index">
+        <i class="iconoir-user" aria-hidden="true"></i>
+        <span>Profile</span>
+    </a>
+</nav>

@@ -19,20 +19,23 @@
             <p>@DateTime.ParseExact(ViewBag.SelectedMonth, "yyyy-MM", null).ToString("MMMM yyyy") Spending Limits</p>
         </div>
         <div class="d-flex align-items-center gap-3">
-            <div class="month-nav">
+            <div class="month-nav month-nav-budget">
                 @{
                     var current = DateTime.ParseExact(ViewBag.SelectedMonth, "yyyy-MM", null);
                     var prev = current.AddMonths(-1).ToString("yyyy-MM");
                     var next = current.AddMonths(1).ToString("yyyy-MM");
                 }
                 <a href="?month=@prev" class="month-nav-btn"><i class="iconoir-nav-arrow-left"></i></a>
-                <span class="month-nav-label" onclick="document.getElementById('monthJumper').showPicker()"
-                      style="cursor:pointer;" title="Click to jump to a month">
+                <span class="month-nav-label month-picker-trigger"
+                      role="button"
+                      tabindex="0"
+                      data-month-input="monthJumper"
+                      data-month-url="?month={value}"
+                      title="Click to jump to a month">
                     @current.ToString("MMM yyyy")
                 </span>
-                <input type="month" id="monthJumper" value="@ViewBag.SelectedMonth"
-                       style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;"
-                       onchange="window.location.href='?month=' + this.value" />
+                <input type="month" id="monthJumper" class="month-jumper-input" value="@ViewBag.SelectedMonth"
+                       />
                 <a href="?month=@next" class="month-nav-btn"><i class="iconoir-nav-arrow-right"></i></a>
             </div>
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#setBudgetModal">
@@ -170,7 +173,7 @@
                     <!-- Month -->
                     <div class="mb-3">
                         <label class="form-label">Month</label>
-                        <input type="month" class="form-control" name="BudgetMonth" id="budgetMonth"
+                        <input type="month" class="form-control budget-month-input" name="BudgetMonth" id="budgetMonth"
                                value="@DateTime.Now.ToString("yyyy-MM")" required />
                     </div>
 

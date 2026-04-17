@@ -70,6 +70,13 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Force browsers that auto-request /favicon.ico to use the custom PNG logo.
+app.MapGet("/favicon.ico", (IWebHostEnvironment env) =>
+{
+    var pngFaviconPath = Path.Combine(env.ContentRootPath, "Assets", "images", "pngegg.png");
+    return Results.File(pngFaviconPath, "image/png");
+});
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Dashboard}/{action=Index}/{id?}");

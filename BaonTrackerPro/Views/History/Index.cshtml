@@ -34,18 +34,21 @@
         <div class="d-flex align-items-center gap-2">
 
             <!-- Month Range Picker -->
-            <div class="month-nav">
+            <div class="month-nav month-nav-history">
                 <a href="?month=@prev&amp;type=@type&amp;sort=@sort" class="month-nav-btn">
                     <i class="iconoir-nav-arrow-left"></i>
                 </a>
-                <span class="month-nav-label" onclick="document.getElementById('historyMonthJumper').showPicker()"
-                      style="cursor:pointer;" title="Click to jump to a month">
+                <span class="month-nav-label month-picker-trigger"
+                      role="button"
+                      tabindex="0"
+                      data-month-input="historyMonthJumper"
+                      data-month-url="?month={value}&type=@type&sort=@sort"
+                      title="Click to jump to a month">
                     @current.ToString("MMM") 1-@DateTime.DaysInMonth(current.Year, current.Month)
                     @current.ToString("yyyy")
                 </span>
-                <input type="month" id="historyMonthJumper" value="@selectedMonth"
-                       style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;"
-                       onchange="window.location.href='?month=' + this.value + '&type=@type&sort=@sort'" />
+                <input type="month" id="historyMonthJumper" class="month-jumper-input" value="@selectedMonth"
+                       />
                 <a href="?month=@next&amp;type=@type&amp;sort=@sort" class="month-nav-btn">
                     <i class="iconoir-nav-arrow-right"></i>
                 </a>
@@ -53,9 +56,12 @@
 
             <!-- Filter Dropdown -->
             <div class="custom-dropdown">
-                <button class="budget-filter-btn" type="button" onclick="toggleDropdown('filterMenu', event)">
+                <button class="budget-filter-btn history-filter-btn"
+                        type="button"
+                        aria-label="Filter by type"
+                        onclick="toggleDropdown('filterMenu', event)">
                     <i class="iconoir-filter"></i>
-                    <span>@(string.IsNullOrEmpty(type) ? "All Types" : type)</span>
+                    <span class="history-pill-label">@(string.IsNullOrEmpty(type) ? "All Types" : type)</span>
                     <i class="iconoir-nav-arrow-down"></i>
                 </button>
                 <div class="custom-dropdown-menu" id="filterMenu">
@@ -69,9 +75,12 @@
 
             <!-- Sort Dropdown -->
             <div class="custom-dropdown">
-                <button class="budget-filter-btn" type="button" onclick="toggleDropdown('sortMenu', event)">
+                <button class="budget-filter-btn history-filter-btn"
+                        type="button"
+                        aria-label="Sort transactions"
+                        onclick="toggleDropdown('sortMenu', event)">
                     <i class="iconoir-sort"></i>
-                    <span>
+                    <span class="history-pill-label">
                         @(sort == "amount_desc" ? "Highest to Lowest" :
                           sort == "amount_asc" ? "Lowest to Highest" : "Sort")
                     </span>
