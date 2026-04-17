@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const sidebarToggleDesktop = document.getElementById('sidebarToggleDesktop');
+    const sidebarToggleDesktopIcon = document.getElementById('sidebarToggleDesktopIcon');
     const sidebarToggleMobile = document.getElementById('sidebarToggleMobile');
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebarOverlay');
@@ -25,6 +26,8 @@ document.addEventListener('DOMContentLoaded', function () {
         body.classList.toggle('sidebar-expanded', !collapsed);
         sidebar?.classList.toggle('w-16', collapsed);
         sidebar?.classList.toggle('w-64', !collapsed);
+        sidebarToggleDesktopIcon?.classList.toggle('iconoir-sidebar-expand', collapsed);
+        sidebarToggleDesktopIcon?.classList.toggle('iconoir-sidebar-collapse', !collapsed);
         sidebarToggleDesktop?.setAttribute('aria-expanded', (!collapsed).toString());
     }
 

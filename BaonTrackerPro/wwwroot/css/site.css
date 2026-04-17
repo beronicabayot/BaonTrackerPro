@@ -1629,6 +1629,11 @@ body {
     transition: all 0.3s ease;
 }
 
+.sidebar-toggle-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
 .sidebar-toggle-glyph {
     display: inline-flex;
     align-items: center;
@@ -1650,9 +1655,24 @@ body {
 }
 
 .sidebar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
     border-radius: 0.75rem;
     padding: 0.5rem;
     margin-bottom: 1rem;
+}
+
+.sidebar-brand-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.sidebar-burger-inline {
+    flex-shrink: 0;
 }
 
 .sidebar .nav-link {
@@ -1690,6 +1710,12 @@ body {
 
 .app-shell.sidebar-collapsed .sidebar-brand {
     justify-content: center;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+}
+
+.app-shell.sidebar-collapsed .sidebar-brand-main {
+    display: none;
 }
 
 .app-shell.sidebar-collapsed .header-text-stacked,
@@ -1789,7 +1815,8 @@ body {
         display: flex;
     }
 
-    .sidebar-top-row {
+    .sidebar-top-row,
+    .sidebar-burger-inline {
         display: none;
     }
 
